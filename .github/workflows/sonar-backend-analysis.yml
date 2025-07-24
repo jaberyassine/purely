@@ -3,7 +3,6 @@ name: SonarCloud Analysis - Backend
 on:
   push:
     paths:
-      - 'microservice-backend/**'
       - '.github/workflows/sonar-backend-analysis.yml'
 
 jobs:
