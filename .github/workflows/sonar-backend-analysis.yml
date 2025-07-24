@@ -31,6 +31,9 @@ jobs:
       - name: SonarCloud Scan
         uses: sonarsource/sonarqube-scan-action@master
         with:
-          host: https://sonarcloud.io
-          token: ${{ secrets.SONAR_TOKEN }}
           projectBaseDir: microservice-backend/${{ matrix.service }}
+          args: >
+            -Dsonar.organization=jaberyassine
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+
