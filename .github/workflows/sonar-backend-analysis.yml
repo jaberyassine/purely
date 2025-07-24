@@ -32,6 +32,7 @@ jobs:
         with:
           projectBaseDir: microservice-backend/${{ matrix.service }}
           args: >
+            -Dsonar.projectKey=${{ matrix.service }}
             -Dsonar.organization=jaberyassine
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
