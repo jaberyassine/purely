@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: product-service
+  data:
+    mongodb:
+      uri: mongodb+srv://jberyassine:Rachide2000@cluster0.zc1yfw6.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0
+      hostname: user-service
+
+server:
+  port: 9013
+
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://eureka:8761/eureka/
+  instance:
+    hostname: product-service
+    instance-id: ${spring.application.name}:${server.port}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    prometheus:
+      enabled: true
