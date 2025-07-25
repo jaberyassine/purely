@@ -36,7 +36,7 @@ jobs:
 
       - name: Build with Maven
         working-directory: microservice-backend/${{ matrix.service }}
-        run: mvn clean verify
+        run: mvn clean verify -x
 
       - name: SonarCloud Analysis
         working-directory: microservice-backend/${{ matrix.service }}
