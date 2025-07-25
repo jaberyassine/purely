@@ -13,15 +13,15 @@ jobs:
     strategy:
       matrix:
         service: [
-          auth-service,
-          user-service,
-          cart-service,
-          category-service,
-          product-service,
-          order-service,
-          notification-service,
-          api-gateway,
-          service-registry
+          auth-service-ms,
+          user-service-ms,
+          cart-service-ms,
+          category-service-ms,
+          product-service-ms,
+          order-service-ms,
+          notification-service-ms,
+          api-gateway-ms,
+          service-registry-ms
         ]
 
     steps:
