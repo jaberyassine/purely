@@ -1,2 +1,3 @@
 app:
   verificationCodeExpirationMs: 300000
+  jwtSecret: purely_super_secret_key
