@@ -3,6 +3,7 @@ name: SonarCloud Backend Analysis
 on:
   push:
     paths:
+      - 'README.md'
       - 'microservice-backend/**'
       - '.github/workflows/sonar-backend-analysis.yml'
 
