@@ -3,6 +3,7 @@ name: SonarCloud Analysis - Backend
 on:
   push:
     paths:
+      - 'README.md'
       - '.github/workflows/sonar-backend-analysis.yml'
 
 jobs:
@@ -36,4 +37,7 @@ jobs:
             -Dsonar.organization=jaberyassine
             -Dsonar.host.url=https://sonarcloud.io
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
-
+            
+            
+            
+            
