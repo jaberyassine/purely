@@ -40,8 +40,9 @@ jobs:
 
       - name: SonarCloud Analysis
         working-directory: microservice-backend/${{ matrix.service }}
-        run: mvn sonar:sonar \
-          -Dsonar.projectKey=${{ matrix.service }}-ms \
-          -Dsonar.organization=jaberyassine \
-          -Dsonar.host.url=https://sonarcloud.io \
-          -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: |
+          mvn sonar:sonar \
+            -Dsonar.projectKey=${{ matrix.service }}-ms \
+            -Dsonar.organization=jaberyassine \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
