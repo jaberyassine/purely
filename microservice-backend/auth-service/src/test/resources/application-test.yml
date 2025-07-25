@@ -2,4 +2,3 @@ app:
   jwtSecret: purely_secret_key
   jwtExpirationMs: 86400000
   verificationCodeExpirationMs: 300000
-
