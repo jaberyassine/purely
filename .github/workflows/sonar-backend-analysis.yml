@@ -55,5 +55,5 @@ jobs:
           scanMetadataReportFile: .scannerwork/report-task.txt
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        continue-on-error: true  # ✅ هذا هو اللي يخلي الـ pipeline يكمل
+        continue-on-error: true
 
