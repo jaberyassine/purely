@@ -49,11 +49,9 @@ jobs:
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Check Quality Gate
-        working-directory: microservice-backend/${{ matrix.service }}
         uses: sonarsource/sonarqube-quality-gate-action@master
         with:
-          scanMetadataReportFile: .scannerwork/report-task.txt
+          scanMetadataReportFile: microservice-backend/${{ matrix.service }}/.scannerwork/report-task.txt
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         continue-on-error: true
-
