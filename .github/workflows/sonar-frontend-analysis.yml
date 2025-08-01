@@ -1,0 +1,33 @@
+name: SonarCloud Frontend Analysis
+
+on:
+  push:
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/sonar-frontend-analysis.yml'
+
+jobs:
+  analyze-frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm install
+
+      - name: Install sonar-scanner
+        run: npm install -g sonarqube-scanner
+
+      - name: Run SonarCloud analysis
+        working-directory: frontend
+        run: |
+          sonar-scanner \
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
