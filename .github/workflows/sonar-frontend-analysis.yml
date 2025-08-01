@@ -7,27 +7,34 @@ on:
       - '.github/workflows/sonar-frontend-analysis.yml'
 
 jobs:
-  analyze-frontend:
+  analyze:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: 18
 
       - name: Install dependencies
         working-directory: frontend
-        run: npm install
+        run: npm ci
 
-      - name: Install sonar-scanner
-        run: npm install -g sonarqube-scanner
+      - name: Install SonarScanner
+        run: npm install -g sonar-scanner
 
-      - name: Run SonarCloud analysis
+      - name: SonarCloud Analysis
         working-directory: frontend
-        run: |
-          sonar-scanner \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+        run: sonar-scanner
+
+      - name: Check Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@master
+        with:
+          scanMetadataReportFile: frontend/.scannerwork/report-task.txt
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        continue-on-error: true
+
