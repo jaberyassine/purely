@@ -7,17 +7,17 @@ on:
       - '.github/workflows/sonar-frontend-analysis.yml'
 
 jobs:
-  analyze:
+  analyze-frontend:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout source code
+      - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18
+          node-version: '18'
 
       - name: Install dependencies
         working-directory: frontend
@@ -26,9 +26,14 @@ jobs:
       - name: Install SonarScanner
         run: npm install -g sonar-scanner
 
-      - name: SonarCloud Analysis
+      - name: Run SonarCloud analysis
         working-directory: frontend
-        run: sonar-scanner
+        run: |
+          sonar-scanner \
+            -Dsonar.projectKey=frontend-ms \
+            -Dsonar.organization=jaberyassine \
+            -Dsonar.host.url=https://sonarcloud.io \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }}
 
       - name: Check Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@master
@@ -37,4 +42,5 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         continue-on-error: true
+
 
