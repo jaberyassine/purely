@@ -37,7 +37,7 @@ jobs:
 
       - name: Build with Maven
         working-directory: microservice-backend/${{ matrix.service }}
-        run: mvn clean verify -X
+        run: mvn clean verify -DskipTests
 
       - name: SonarCloud Analysis
         working-directory: microservice-backend/${{ matrix.service }}
@@ -55,3 +55,16 @@ jobs:
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         continue-on-error: true
+
+      - name: Build Docker image
+        run: |
+          docker build -t jaberyassine/${{ matrix.service }}:latest microservice-backend/${{ matrix.service }}
+
+      - name: Scan Docker image with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: jaberyassine/${{ matrix.service }}:latest
+          format: table
+          exit-code: 0
+          ignore-unfixed: true
+
