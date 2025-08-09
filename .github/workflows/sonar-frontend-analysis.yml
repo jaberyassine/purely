@@ -43,4 +43,18 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         continue-on-error: true
 
+      - name: Build Docker image
+        working-directory: frontend
+        run: docker build -t frontend-app:latest .
 
+      - name: Scan Docker image with Trivy
+        run: |
+          mkdir -p trivy-reports/frontend
+          trivy image --format table --output trivy-reports/frontend/trivy-report.txt frontend-app:latest
+          trivy image --format json --output trivy-reports/frontend/trivy-report.json frontend-app:latest
+
+      - name: Upload Trivy Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: trivy-report-frontend
+          path: trivy-reports/frontend
