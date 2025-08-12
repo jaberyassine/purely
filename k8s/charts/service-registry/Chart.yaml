@@ -1,0 +1,5 @@
+apiVersion: v2
+name: service-registry
+description: Helm chart for Eureka Service Registry
+version: 0.1.0
+appVersion: "1.0.0"

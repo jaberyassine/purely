@@ -1,0 +1,35 @@
+replicaCount: 1
+
+image:
+  repository: purelyregistry.azurecr.io/product-service
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+env:
+  - name: MONGODB_URI
+    valueFrom:
+      secretKeyRef:
+        name: mongodb-secret
+        key: uri
+
+prometheus:
+  enabled: true
+  path: /actuator/prometheus
+  interval: 15s
+
+mongodb:
+  uri: "mongodb+srv://jberyassine:Rachide2000@cluster0.zc1yfw6.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0"
+

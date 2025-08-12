@@ -3,7 +3,8 @@ spring:
     name: order-service
   data:
     mongodb:
-      uri: mongodb+srv://jberyassine:Rachide2000@cluster0.zc1yfw6.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0
+      #uri: mongodb+srv://jberyassine:Rachide2000@cluster0.zc1yfw6.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0
+      uri: ${MONGODB_URI}
       #hostname: order-service
 server:
   port: 9071
@@ -11,7 +12,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka:8761/eureka/
+      defaultZone: http://service-registry:8761/eureka/
   instance:
     hostname: order-service
     instance-id: ${spring.application.name}:${server.port}

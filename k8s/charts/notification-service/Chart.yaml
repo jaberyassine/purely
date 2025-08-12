@@ -1,0 +1,5 @@
+apiVersion: v2
+name: notification-service
+description: Helm chart for the Notification Microservice with Prometheus metrics
+version: 0.1.0
+appVersion: "1.0.0"

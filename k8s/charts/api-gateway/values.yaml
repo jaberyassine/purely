@@ -1,0 +1,28 @@
+replicaCount: 1
+
+image:
+  repository: purelyregistry.azurecr.io/api-gateway
+  tag: latest
+  pullPolicy: IfNotPresent
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 8080
+
+resources:
+  limits:
+    cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
+
+env: []
+
+prometheus:
+  enabled: true
+  path: /actuator/prometheus
+  interval: 15s
+
+

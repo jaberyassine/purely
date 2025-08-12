@@ -1,0 +1,15 @@
+defaultDashboardsEnabled: true
+adminUser: admin
+adminPassword: admin123
+
+service:
+  type: ClusterIP
+  port: 3000
+
+resources:
+  limits:
+    cpu: 200m
+    memory: 512Mi
+  requests:
+    cpu: 100m
+    memory: 256Mi
