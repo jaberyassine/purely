@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: purelyregistry.azurecr.io/api-gateway
+  repository: purelyacr.azurecr.io/api-gateway
   tag: latest
   pullPolicy: IfNotPresent
 

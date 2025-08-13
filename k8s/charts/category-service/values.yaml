@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: purelyregistry.azurecr.io/category-service
+  repository: purelyacr.azurecr.io/category-service
   tag: latest
   pullPolicy: IfNotPresent
 

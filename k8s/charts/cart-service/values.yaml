@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: purelyregistry.azurecr.io/cart-service
+  repository: purelyacr.azurecr.io/cart-service
   tag: latest
   pullPolicy: IfNotPresent
 

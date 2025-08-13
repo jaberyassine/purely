@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: purelyregistry.azurecr.io/service-registry
+  repository: purelyacr.azurecr.io/service-registry
   tag: latest
   pullPolicy: IfNotPresent
 

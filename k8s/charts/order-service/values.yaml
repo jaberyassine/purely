@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: purelyregistry.azurecr.io/order-service
+  repository: purelyacr.azurecr.io/order-service
   tag: latest
   pullPolicy: IfNotPresent
 

@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: purelyregistry.azurecr.io/auth-service
+  repository: purelyacr.azurecr.io/auth-service
   tag: latest
   pullPolicy: IfNotPresent
 
