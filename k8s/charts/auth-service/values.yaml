@@ -24,6 +24,17 @@ env:
       secretKeyRef:
         name: mongodb-secret
         key: uri
+  - name: APP_JWTSECRET
+    valueFrom:
+      secretKeyRef:
+        name: auth-config
+        key: APP_JWTSECRET
+
+  - name: APP_JWTEXPIRATIONMS
+    valueFrom:
+      secretKeyRef:
+        name: auth-config
+        key: APP_JWTEXPIRATIONMS
 
 prometheus:
   enabled: true
