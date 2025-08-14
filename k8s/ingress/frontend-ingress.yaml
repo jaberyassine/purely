@@ -2,11 +2,18 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: frontend-ingress
+  namespace: frontend
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: letsencrypt-http01
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - purely.52-226-168-127.sslip.io
+      secretName: frontend-tls
   rules:
-    - host: purely-app.local
+    - host: purely.52-226-168-127.sslip.io
       http:
         paths:
           - path: /
