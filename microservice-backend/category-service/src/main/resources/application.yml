@@ -12,7 +12,7 @@ server:
 eureka:
   client:
     service-url:
-      defaultZone: http://service-registry:8761/eureka/
+      defaultZone: http://service-registry.service-registry.svc.cluster.local:8761/eureka
   instance:
     hostname: category-service
     instance-id: ${spring.application.name}:${server.port}
