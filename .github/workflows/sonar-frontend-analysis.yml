@@ -3,6 +3,7 @@ name: SonarCloud Frontend Analysis
 on:
   push:
     paths:
+      - 'README.md'
       - 'frontend/**'
       - '.github/workflows/sonar-frontend-analysis.yml'
 
