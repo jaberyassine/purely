@@ -1,14 +1,21 @@
-apiVersion: helm.cattle.io/v1
-kind: HelmChart
+apiVersion: argoproj.io/v1alpha1
+kind: Application
 metadata:
   name: ingress-nginx
-  namespace: kube-system
+  namespace: argocd
 spec:
-  chart: ingress-nginx
-  repo: https://kubernetes.github.io/ingress-nginx
-  version: 4.9.0
-  targetNamespace: ingress-nginx
-  valuesContent: |-
-    controller:
-      service:
-        type: LoadBalancer
+  project: default
+  source:
+    repoURL: https://kubernetes.github.io/ingress-nginx
+    chart: ingress-nginx
+    targetRevision: 4.9.0
+    helm:
+      parameters:
+        - name: controller.service.type
+          value: LoadBalancer
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: ingress-nginx
+  syncPolicy:
+    automated: {}
+
