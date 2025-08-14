@@ -3,18 +3,10 @@ kind: Ingress
 metadata:
   name: api-gateway-ingress
   namespace: api-gateway
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-http01
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - purely.52-226-168-127.sslip.io
-      secretName: api-tls
   rules:
-    - host: purely.52-226-168-127.sslip.io
-      http:
+    - http:
         paths:
           - path: /api
             pathType: Prefix

@@ -3,18 +3,10 @@ kind: Ingress
 metadata:
   name: frontend-ingress
   namespace: frontend
-  annotations:
-    cert-manager.io/cluster-issuer: letsencrypt-http01
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - purely.52-226-168-127.sslip.io
-      secretName: frontend-tls
   rules:
-    - host: purely.52-226-168-127.sslip.io
-      http:
+    - http:
         paths:
           - path: /
             pathType: Prefix
