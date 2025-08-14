@@ -1,5 +1,5 @@
 image:
-  repository: jaberyassine/frontend
+  repository: purelyacr.azurecr.io/frontend-app
   tag: latest
   pullPolicy: IfNotPresent
 
