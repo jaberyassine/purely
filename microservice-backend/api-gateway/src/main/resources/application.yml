@@ -122,9 +122,9 @@ eureka:
       defaultZone: http://service-registry.service-registry.svc.cluster.local:8761/eureka
     register-with-eureka: true
     fetch-registry: true
-    registry-fetch-interval-seconds: 10   # اختياري: سحب أسرع للريجيستري
+    registry-fetch-interval-seconds: 10
   instance:
-    prefer-ip-address: true               # مهم: سجّل الـIP بدل hostname
+    prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}:${random.value}
 
 management:
