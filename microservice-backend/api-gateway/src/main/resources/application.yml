@@ -8,7 +8,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: false
+          enabled: false   # عندك Routes مخصّصة، فمو محتاج الـLocator
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
       globalcors:
@@ -17,7 +17,6 @@ spring:
             allowedOrigins: "*"
             allowedMethods: "*"
             allowedHeaders: "*"
-
       routes:
         # =================== AUTH-SERVICE ===================
         - id: auth-service-actuator
@@ -123,9 +122,10 @@ eureka:
       defaultZone: http://service-registry.service-registry.svc.cluster.local:8761/eureka
     register-with-eureka: true
     fetch-registry: true
+    registry-fetch-interval-seconds: 10   # اختياري: سحب أسرع للريجيستري
   instance:
-    hostname: api-gateway
-    instance-id: ${spring.application.name}:${server.port}
+    prefer-ip-address: true               # مهم: سجّل الـIP بدل hostname
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
 
 management:
   endpoints:

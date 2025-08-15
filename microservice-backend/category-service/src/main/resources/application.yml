@@ -11,12 +11,13 @@ server:
 
 eureka:
   client:
-    service-url:
+    serviceUrl:
       defaultZone: http://service-registry.service-registry.svc.cluster.local:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
   instance:
-    hostname: category-service
-    instance-id: ${spring.application.name}:${server.port}
-    prefer-ip-address: false
+    prefer-ip-address: true
+    instance-id: ${spring.application.name}:${server.port}:${random.value}
 
 management:
   endpoints:
