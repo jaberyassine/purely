@@ -10,54 +10,103 @@ spring:
         locator:
           enabled: true
       routes:
+        # === AUTH-SERVICE ===
+        - id: auth-service-actuator
+          uri: lb://AUTH-SERVICE
+          predicates:
+            - Path=/auth-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: auth-service
           uri: lb://AUTH-SERVICE
           predicates:
             - Path=/auth-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/auth-service/(?<segment>.*), /auth/${segment}
 
+        # === NOTIFICATION-SERVICE ===
+        - id: notification-service-actuator
+          uri: lb://NOTIFICATION-SERVICE
+          predicates:
+            - Path=/notification-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: notification-service
           uri: lb://NOTIFICATION-SERVICE
           predicates:
             - Path=/notification-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/notification-service/(?<segment>.*), /notification/${segment}
 
+        # === CATEGORY-SERVICE ===
+        - id: category-service-actuator
+          uri: lb://CATEGORY-SERVICE
+          predicates:
+            - Path=/category-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: category-service
           uri: lb://CATEGORY-SERVICE
           predicates:
             - Path=/category-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/category-service/(?<segment>.*), /category/${segment}
 
+        # === PRODUCT-SERVICE ===
+        - id: product-service-actuator
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/product-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: product-service
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/product-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/product-service/(?<segment>.*), /product/${segment}
 
+        # === USER-SERVICE ===
+        - id: user-service-actuator
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/user-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: user-service
           uri: lb://USER-SERVICE
           predicates:
             - Path=/user-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/user-service/(?<segment>.*), /user/${segment}
 
+        # === CART-SERVICE ===
+        - id: cart-service-actuator
+          uri: lb://CART-SERVICE
+          predicates:
+            - Path=/cart-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: cart-service
           uri: lb://CART-SERVICE
           predicates:
             - Path=/cart-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/cart-service/(?<segment>.*), /cart/${segment}
 
+        # === ORDER-SERVICE ===
+        - id: order-service-actuator
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/order-service/actuator/**
+          filters:
+            - StripPrefix=1
         - id: order-service
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/order-service/**
           filters:
-            - StripPrefix=1
+            - RewritePath=/order-service/(?<segment>.*), /order/${segment}
 
       default-filters:
         - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
