@@ -8,7 +8,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
+          enabled: false
       routes:
         # === AUTH-SERVICE ===
         - id: auth-service-actuator
