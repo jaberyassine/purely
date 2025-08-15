@@ -9,8 +9,17 @@ spring:
       discovery:
         locator:
           enabled: false
+      default-filters:
+        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
+      globalcors:
+        cors-configurations:
+          "[/**]":
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+
       routes:
-        # === AUTH-SERVICE ===
+        # =================== AUTH-SERVICE ===================
         - id: auth-service-actuator
           uri: lb://AUTH-SERVICE
           predicates:
@@ -22,9 +31,9 @@ spring:
           predicates:
             - Path=/auth-service/**
           filters:
-            - RewritePath=/auth-service/(?<segment>.*), /auth/${segment}
+            - StripPrefix=1
 
-        # === NOTIFICATION-SERVICE ===
+        # ============== NOTIFICATION-SERVICE ===============
         - id: notification-service-actuator
           uri: lb://NOTIFICATION-SERVICE
           predicates:
@@ -36,9 +45,9 @@ spring:
           predicates:
             - Path=/notification-service/**
           filters:
-            - RewritePath=/notification-service/(?<segment>.*), /notification/${segment}
+            - StripPrefix=1
 
-        # === CATEGORY-SERVICE ===
+        # ================= CATEGORY-SERVICE =================
         - id: category-service-actuator
           uri: lb://CATEGORY-SERVICE
           predicates:
@@ -50,9 +59,9 @@ spring:
           predicates:
             - Path=/category-service/**
           filters:
-            - RewritePath=/category-service/(?<segment>.*), /category/${segment}
+            - StripPrefix=1
 
-        # === PRODUCT-SERVICE ===
+        # ================== PRODUCT-SERVICE =================
         - id: product-service-actuator
           uri: lb://PRODUCT-SERVICE
           predicates:
@@ -64,9 +73,9 @@ spring:
           predicates:
             - Path=/product-service/**
           filters:
-            - RewritePath=/product-service/(?<segment>.*), /product/${segment}
+            - StripPrefix=1
 
-        # === USER-SERVICE ===
+        # =================== USER-SERVICE ===================
         - id: user-service-actuator
           uri: lb://USER-SERVICE
           predicates:
@@ -78,9 +87,9 @@ spring:
           predicates:
             - Path=/user-service/**
           filters:
-            - RewritePath=/user-service/(?<segment>.*), /user/${segment}
+            - StripPrefix=1
 
-        # === CART-SERVICE ===
+        # =================== CART-SERVICE ===================
         - id: cart-service-actuator
           uri: lb://CART-SERVICE
           predicates:
@@ -92,9 +101,9 @@ spring:
           predicates:
             - Path=/cart-service/**
           filters:
-            - RewritePath=/cart-service/(?<segment>.*), /cart/${segment}
+            - StripPrefix=1
 
-        # === ORDER-SERVICE ===
+        # ================== ORDER-SERVICE ===================
         - id: order-service-actuator
           uri: lb://ORDER-SERVICE
           predicates:
@@ -106,16 +115,7 @@ spring:
           predicates:
             - Path=/order-service/**
           filters:
-            - RewritePath=/order-service/(?<segment>.*), /order/${segment}
-
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-      globalcors:
-        cors-configurations:
-          "[/**]":
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
+            - StripPrefix=1
 
 eureka:
   client:
