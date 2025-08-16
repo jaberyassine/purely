@@ -2,7 +2,7 @@ replicaCount: 1
 
 image:
   repository: purelyacr.azurecr.io/notification-service
-  tag: latest
+  tag: 20250816-062833
   pullPolicy: IfNotPresent
 
 service:
