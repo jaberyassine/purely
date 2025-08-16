@@ -3,8 +3,9 @@ apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ .Chart.Name }}-monitor
+  namespace: {{ .Release.Namespace }}
   labels:
-    release: {{ .Values.prometheus.releaseLabel | default .Release.Name }}
+    release: {{ .Values.prometheus.releaseLabel | default "monitoring" | quote }}
 spec:
   selector:
     matchLabels:
@@ -13,7 +14,7 @@ spec:
     matchNames:
       - {{ .Release.Namespace }}
   endpoints:
-    - port: http
-      path: {{ .Values.prometheus.path | quote }}
-      interval: {{ .Values.prometheus.interval | quote }}
+    - port: {{ .Values.prometheus.portName | default "http" | quote }}
+      path: {{ .Values.prometheus.path | default "/actuator/prometheus" | quote }}
+      interval: {{ .Values.prometheus.interval | default "15s" | quote }}
 {{- end }}
