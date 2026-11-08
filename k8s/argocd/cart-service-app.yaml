@@ -3,8 +3,10 @@ kind: Application
 metadata:
   name: cart-service
   namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "10"
 spec:
-  project: default
+  project: purely
   source:
     repoURL: https://github.com/jaberyassine/purely.git
     targetRevision: HEAD

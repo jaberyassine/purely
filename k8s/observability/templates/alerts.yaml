@@ -1,0 +1,27 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: purely-alerts
+  labels: { release: monitoring }
+spec:
+  groups:
+    - name: purely.health
+      rules:
+        - alert: PurelyTargetDown
+          expr: up{namespace=~"api-gateway|auth-service|cart-service|category-service|notification-service|order-service|product-service|service-registry|user-service|frontend"} == 0
+          for: 2m
+          labels: { severity: warning }
+          annotations:
+            summary: 'Purely metrics target is unreachable'
+        - alert: PurelyProductMetricsMissing
+          expr: absent(up{namespace="product-service"})
+          for: 5m
+          labels: { severity: warning }
+          annotations:
+            summary: 'Product service monitoring target is missing'
+        - alert: PurelyDeploymentUnavailable
+          expr: kube_deployment_status_replicas_available{namespace=~"api-gateway|auth-service|cart-service|category-service|notification-service|order-service|product-service|service-registry|user-service|frontend"} < 1
+          for: 2m
+          labels: { severity: critical }
+          annotations:
+            summary: 'A Purely deployment has no available replica'

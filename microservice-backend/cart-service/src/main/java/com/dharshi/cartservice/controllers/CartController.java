@@ -41,14 +41,14 @@ public class CartController {
 
     @GetMapping("/get/byId")
     @PreAuthorize("hasRole('ROLE_USER')")
-    ResponseEntity<ApiResponseDto<?>> getCartById(@RequestParam String id) throws ServiceLogicException {
-        return cartService.getCartById(id);
+    ResponseEntity<ApiResponseDto<?>> getCartById(Authentication authentication, @RequestParam String id) throws ServiceLogicException, ResourceNotFoundException {
+        return cartService.getCartById(id, authentication.getPrincipal().toString());
     }
 
     @DeleteMapping("/clear/byId")
     @PreAuthorize("hasRole('ROLE_USER')")
-    ResponseEntity<ApiResponseDto<?>> clearCartById(@RequestParam String id) throws ResourceNotFoundException, ServiceLogicException {
-        return cartService.clearCartById(id);
+    ResponseEntity<ApiResponseDto<?>> clearCartById(Authentication authentication, @RequestParam String id) throws ResourceNotFoundException, ServiceLogicException {
+        return cartService.clearCartById(id, authentication.getPrincipal().toString());
     }
 
 }

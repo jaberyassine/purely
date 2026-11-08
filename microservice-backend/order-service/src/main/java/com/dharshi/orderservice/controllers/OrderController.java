@@ -21,7 +21,6 @@ public class OrderController {
     @PostMapping("/create")
     @PreAuthorize("hasRole('ROLE_USER')")
     ResponseEntity<ApiResponseDto<?>> createOrder(Authentication authentication, @RequestBody OrderRequestDto request) throws ResourceNotFoundException, ServiceLogicException {
-        System.out.println(authentication.getCredentials().toString());
         return orderService.createOrder(authentication.getCredentials().toString(), request);
     }
 
@@ -39,8 +38,8 @@ public class OrderController {
 
     @PatchMapping("/cancel")
     @PreAuthorize("hasRole('ROLE_USER')")
-    ResponseEntity<ApiResponseDto<?>> cancelOrder(@RequestParam String orderId) throws ResourceNotFoundException, ServiceLogicException {
-        return orderService.cancelOrder(orderId);
+    ResponseEntity<ApiResponseDto<?>> cancelOrder(Authentication authentication, @RequestParam String orderId) throws ResourceNotFoundException, ServiceLogicException {
+        return orderService.cancelOrder(orderId, authentication.getPrincipal().toString());
     }
 
 

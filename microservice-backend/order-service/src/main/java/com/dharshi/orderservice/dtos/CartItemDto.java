@@ -1,10 +1,14 @@
 package com.dharshi.orderservice.dtos;
 
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartItemDto {
     private String productId;
     private String productName;

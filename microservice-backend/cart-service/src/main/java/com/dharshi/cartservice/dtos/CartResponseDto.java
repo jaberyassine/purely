@@ -1,12 +1,16 @@
 package com.dharshi.cartservice.dtos;
 
 import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Set;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class CartResponseDto {
 
     private String cartId;

@@ -115,10 +115,10 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> clearCartById(String id) throws ServiceLogicException, ResourceNotFoundException {
+    public ResponseEntity<ApiResponseDto<?>> clearCartById(String id, String userId) throws ServiceLogicException, ResourceNotFoundException {
         try {
-            if(cartRepository.existsById(id)) {
-                Cart userCart = cartRepository.findById(id).orElse(null);
+            Cart userCart = cartRepository.findByIdAndUserId(id, userId).orElse(null);
+            if(userCart != null) {
                 userCart.setCartItems(new HashSet<>());
                 cartRepository.save(userCart);
 
@@ -139,10 +139,11 @@ public class CartServiceImpl implements CartService {
     }
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> getCartById(String id) throws ServiceLogicException {
+    public ResponseEntity<ApiResponseDto<?>> getCartById(String id, String userId) throws ServiceLogicException, ResourceNotFoundException {
         try {
 
-            Cart cart = cartRepository.findById(id).orElse(null);
+            Cart cart = cartRepository.findByIdAndUserId(id, userId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
             CartResponseDto cartResponse = cartToCartResponseDto(cart);
 
             return ResponseEntity.ok(
@@ -153,6 +154,8 @@ public class CartServiceImpl implements CartService {
                             .build()
             );
 
+        }catch (ResourceNotFoundException e) {
+            throw e;
         }catch (Exception e) {
             log.error("Failed to find cart: " + e.getMessage());
             throw new ServiceLogicException("Unable to find cart!");

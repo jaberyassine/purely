@@ -1,0 +1,133 @@
+name: Build approved release
+# Explicitly started after preparation; no Azure deployment is performed here.
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: purely-release
+  cancel-in-progress: false
+jobs:
+  validate:
+    uses: ./.github/workflows/validate.yml
+  build:
+    needs: validate
+    if: github.ref_name == github.event.repository.default_branch
+    runs-on: ubuntu-latest
+    environment: release
+    permissions:
+      contents: read
+      id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        service: [api-gateway, auth-service, cart-service, category-service, notification-service, order-service, product-service, service-registry, user-service, frontend]
+    env:
+      SERVICE: ${{ matrix.service }}
+      ACR_SERVER: ${{ vars.ACR_LOGIN_SERVER }}
+      ACR_NAME: ${{ vars.ACR_NAME }}
+      SONAR_ORG: ${{ vars.SONAR_ORGANIZATION }}
+      TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Require release configuration
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        run: |
+          test -n "$ACR_SERVER" && test -n "$ACR_NAME"
+          test -n "$SONAR_ORG" && test -n "$SONAR_TOKEN"
+      - name: Backend quality gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        if: matrix.service != 'frontend'
+        working-directory: microservice-backend/${{ matrix.service }}
+        run: >-
+          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:5.0.0.4389:sonar
+          -Dspring.profiles.active=test
+          -Dsonar.projectKey="$SERVICE-ms"
+          -Dsonar.organization="$SONAR_ORG"
+          -Dsonar.host.url=https://sonarcloud.io
+          -Dsonar.qualitygate.wait=true
+      - name: Frontend quality gate
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        if: matrix.service == 'frontend'
+        uses: SonarSource/sonarqube-scan-action@v5
+        with:
+          projectBaseDir: frontend
+          args: >-
+            -Dsonar.projectKey=frontend-ms
+            -Dsonar.organization=${{ vars.SONAR_ORGANIZATION }}
+            -Dsonar.host.url=https://sonarcloud.io
+            -Dsonar.qualitygate.wait=true
+      - name: Build versioned image
+        run: |
+          if [ "$SERVICE" = frontend ]; then
+            CONTEXT=frontend; IMAGE=frontend-app
+          else
+            CONTEXT="microservice-backend/$SERVICE"; IMAGE="$SERVICE"
+          fi
+          echo "IMAGE=$IMAGE" >> "$GITHUB_ENV"
+          docker build --pull --label "org.opencontainers.image.revision=$TAG" -t "$ACR_SERVER/$IMAGE:$TAG" "$CONTEXT"
+      - name: Enforce vulnerability policy
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+        with:
+          version: v0.76.2
+          image-ref: ${{ vars.ACR_LOGIN_SERVER }}/${{ env.IMAGE }}:${{ github.sha }}
+          format: table
+          severity: HIGH,CRITICAL
+          scanners: vuln,secret
+          ignore-unfixed: false
+          exit-code: '1'
+      - uses: azure/login@v2
+        with:
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+      - name: Push scanned image
+        run: |
+          az acr login --name "$ACR_NAME"
+          if az acr repository show --name "$ACR_NAME" --image "$IMAGE:$TAG" >/dev/null 2>&1; then
+            echo "Release tag already exists. Refusing to overwrite a published release."
+            exit 1
+          fi
+          docker push "$ACR_SERVER/$IMAGE:$TAG"
+          az acr repository update --name "$ACR_NAME" --image "$IMAGE:$TAG" --write-enabled false --delete-enabled false
+  propose-gitops:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Set the exact release in Helm
+        env:
+          RELEASE_SHA: ${{ github.sha }}
+          ACR_SERVER: ${{ vars.ACR_LOGIN_SERVER }}
+        run: node scripts/set-release.cjs "$RELEASE_SHA" "$ACR_SERVER"
+      - name: Propose desired state change
+        uses: peter-evans/create-pull-request@v7
+        with:
+          branch: gitops/release-${{ github.sha }}
+          base: ${{ github.event.repository.default_branch }}
+          commit-message: 'release: deploy ${{ github.sha }}'
+          title: 'Release ${{ github.sha }}'
+          body: |
+            All release jobs passed tests, quality gates, and image vulnerability policy.
+            This PR changes the desired image versions. Merging it allows Argo CD to reconcile the release.
+            Roll back by reverting this merge commit. Review the image references before merging.
+          add-paths: k8s/charts/**/values.yaml

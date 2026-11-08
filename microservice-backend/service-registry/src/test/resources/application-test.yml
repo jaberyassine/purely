@@ -1,0 +1,17 @@
+spring:
+  mongodb:
+    uri: mongodb://127.0.0.1:27017/purely_test?serverSelectionTimeoutMS=1000
+  mail:
+    host: localhost
+    username: test@example.invalid
+    password: test-only
+eureka:
+  client:
+    enabled: true
+JWT_SECRET: dGVzdC1vbmx5LXNlY3JldC0zMi1ieXRlcy1taW5pbXVtISE=
+MONGODB_URI: mongodb://127.0.0.1:27017/purely_test?serverSelectionTimeoutMS=1000
+SMTP_HOST: localhost
+SMTP_USERNAME: test@example.invalid
+SMTP_PASSWORD: test-only
+
+eureka.server.wait-time-in-ms-when-sync-empty: 0

@@ -1,0 +1,7 @@
+"Service","Tests","Passed","Failed","Method"
+"auth-service","3","3","0","javac -parameters -g --release 21 + JUnit Platform Launcher 6.0.3; cached classpath; real SpringDecoder"
+"cart-service","5","5","0","javac -parameters -g --release 21 + JUnit Platform Launcher 6.0.3; cached classpath; real SpringDecoder"
+"category-service","2","2","0","javac -parameters -g --release 21 + JUnit Platform Launcher 6.0.3; cached classpath; real SpringDecoder"
+"order-service","6","6","0","javac -parameters -g --release 21 + JUnit Platform Launcher 6.0.3; cached classpath; real SpringDecoder"
+"product-service","4","4","0","javac -parameters -g --release 21 + JUnit Platform Launcher 6.0.3; cached classpath; real SpringDecoder"
+"user-service","2","2","0","javac -parameters -g --release 21 + JUnit Platform Launcher 6.0.3; cached classpath; real SpringDecoder"

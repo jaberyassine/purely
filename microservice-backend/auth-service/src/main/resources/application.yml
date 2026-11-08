@@ -1,19 +1,14 @@
+server:
+  port: 9031
 spring:
   application:
     name: auth-service
-
-  data:
-    mongodb:
-      #uri: mongodb+srv://jberyassine:Rachide2000@cluster0.zc1yfw6.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0
-      uri: ${MONGODB_URI}
-      # hostname: auth-service
-
-server:
-  port: 9031
-
+  mongodb:
+    uri: ${MONGODB_URI}
 app:
+  jwtSecret: ${JWT_SECRET}
+  jwtExpirationMs: 3600000
   verificationCodeExpirationMs: 300000
-
 eureka:
   client:
     serviceUrl:
@@ -23,13 +18,23 @@ eureka:
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}:${random.value}
-
 management:
   endpoints:
     web:
       exposure:
         include: health,info,prometheus
   endpoint:
-    prometheus:
-      enabled: true
-
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        readiness:
+          include: readinessState,mongo
+  metrics:
+    tags:
+      application: ${spring.application.name}
+server.shutdown: graceful
+spring.lifecycle.timeout-per-shutdown-phase: 20s
+management.metrics.distribution.percentiles-histogram.http.server.requests: true
+spring.jackson.use-jackson2-defaults: true

@@ -25,10 +25,16 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
+                .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler)
+                        // Write the denial directly; sendError would dispatch to the protected /error route.
+                        .accessDeniedHandler((request, response, denied) -> {
+                            response.setStatus(403);
+                            response.setContentType("application/json");
+                            response.getWriter().write("{\"status\":403,\"error\":\"Forbidden\"}");
+                        }))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/actuator/prometheus").permitAll()
+                        auth.requestMatchers("/actuator/health/**", "/actuator/prometheus").permitAll()
                                 .requestMatchers("/product/**").permitAll()
                                 .requestMatchers("/admin/product/**").hasAuthority("ROLE_ADMIN")
                                 .anyRequest().authenticated()
