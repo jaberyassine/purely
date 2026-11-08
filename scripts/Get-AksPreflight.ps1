@@ -44,7 +44,7 @@ try {
     if (-not $group) { throw 'Expected resource group was not readable. Check the selected subscription and names.' }
     $cluster = Read-Check 'aks' @('aks','show','--resource-group',$ResourceGroup,'--name',$ClusterName,
         '--subscription',$subscription,'--query',
-        '{name:name,resourceGroup:resourceGroup,location:location,power:powerState.code,provisioningState:provisioningState,kubernetesVersion:kubernetesVersion,dnsServiceIP:networkProfile.dnsServiceIP,serviceCidr:networkProfile.serviceCidr,nodeResourceGroup:nodeResourceGroup,privateCluster:apiServerAccessProfile.enablePrivateCluster,authorizedIPRanges:apiServerAccessProfile.authorizedIpRanges}')
+        '{name:name,resourceGroup:resourceGroup,location:location,power:powerState.code,provisioningState:provisioningState,kubernetesVersion:kubernetesVersion,dnsServiceIP:networkProfile.dnsServiceIp,serviceCidr:networkProfile.serviceCidr,nodeResourceGroup:nodeResourceGroup,privateCluster:apiServerAccessProfile.enablePrivateCluster,authorizedIPRanges:apiServerAccessProfile.authorizedIpRanges}')
     $registry = Read-Check 'acr' @('acr','show','--resource-group',$ResourceGroup,'--name',$RegistryName,
         '--subscription',$subscription,'--query','{name:name,loginServer:loginServer,sku:sku.name,adminEnabled:adminUserEnabled,provisioningState:provisioningState,roleAssignmentMode:roleAssignmentMode}')
     if ($cluster) {

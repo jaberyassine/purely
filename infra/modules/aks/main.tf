@@ -20,6 +20,7 @@ resource "azurerm_kubernetes_cluster" "main" {
   resource_group_name = var.resource_group_name
   dns_prefix          = var.name
   sku_tier            = "Free"
+  oidc_issuer_enabled = true
   tags                = var.tags
   depends_on          = [azurerm_role_assignment.subnet_network]
 
@@ -33,6 +34,13 @@ resource "azurerm_kubernetes_cluster" "main" {
     os_disk_type    = "Managed"
     os_disk_size_gb = 128
     tags            = var.tags
+    # Preserve Azure's current defaults; this does not initiate an upgrade.
+    # A third 4-vCPU surge node still requires an increased DSv4 family quota.
+    upgrade_settings {
+      max_surge                     = "10%"
+      drain_timeout_in_minutes      = 0
+      node_soak_duration_in_minutes = 0
+    }
   }
 
   identity {
