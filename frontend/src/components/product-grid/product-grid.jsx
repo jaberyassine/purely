@@ -12,7 +12,7 @@ export function ProductCard({ product }) {
   const [message, setMessage] = useState('');
   const [broken, setBroken] = useState(false);
   const add = async () => {
-    if (!user?.token) { navigate('/auth/login'); return; }
+    if (!user?.token) { void navigate('/auth/login'); return; }
     setBusy(true); setMessage('');
     try {
       const success = await addItemToCart(product.id, 1);

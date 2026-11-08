@@ -22,9 +22,9 @@ export default function Header() {
   }, [cartOpen, menu]);
   const search = event => {
     event.preventDefault();
-    if (query.trim()) { navigate('/search/' + encodeURIComponent(query.trim())); setMenu(false); }
+    if (query.trim()) { void navigate('/search/' + encodeURIComponent(query.trim())); setMenu(false); }
   };
-  const logout = () => { localStorage.removeItem('user'); clearCart(); toggleUser(); navigate('/'); setMenu(false); };
+  const logout = () => { localStorage.removeItem('user'); clearCart(); toggleUser(); void navigate('/'); setMenu(false); };
   const closeCart = () => { setCartOpen(false); cartButton.current?.focus(); };
   return <>
     <a className="skip-link" href="#page-content">Skip to content</a>

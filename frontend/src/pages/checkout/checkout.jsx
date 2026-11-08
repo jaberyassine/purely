@@ -19,7 +19,7 @@ const CheckoutForm = () => {
     try {
       await placeOrder(data, cart.cartId);
       clearCart();
-      navigate("/order/success");
+      void navigate("/order/success");
     } catch (e) {
       // error handling if needed
     }
