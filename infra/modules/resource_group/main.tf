@@ -1,6 +1,7 @@
 resource "azurerm_resource_group" "main" {
-  name     = "dev-rg"
-  location = "East US"
+  name     = var.name
+  location = var.location
+  tags     = var.tags
 }
 
 output "name" {
@@ -10,3 +11,6 @@ output "name" {
 output "location" {
   value = azurerm_resource_group.main.location
 }
+variable "name" { type = string }
+variable "location" { type = string }
+variable "tags" { type = map(string) }

@@ -1,9 +1,10 @@
 resource "azurerm_container_registry" "main" {
-  name                = "purelyacr"
+  name                = var.name
   resource_group_name = var.resource_group_name
   location            = var.location
   sku                 = "Basic"
   admin_enabled       = false
+  tags                = var.tags
 }
 
 
@@ -16,3 +17,5 @@ output "login_server" {
   value = azurerm_container_registry.main.login_server
 }
 variable "location" {}
+variable "name" { type = string }
+variable "tags" { type = map(string) }
