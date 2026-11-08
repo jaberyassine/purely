@@ -6,6 +6,8 @@ image:
 service:
   type: LoadBalancer
   port: 443
+  annotations:
+    service.beta.kubernetes.io/azure-dns-label-name: purely-demo-71154f86
 tls:
   secretName: purely-tls
 resources:

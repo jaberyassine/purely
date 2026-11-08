@@ -10,10 +10,19 @@ spec:
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
     chart: kube-prometheus-stack
-    targetRevision: '76.4.0'
+    targetRevision: '92.22.0'
     helm:
       releaseName: monitoring
       values: |
+        # Azure manages these control-plane endpoints; do not scrape unreachable targets.
+        kubeEtcd:
+          enabled: false
+        kubeControllerManager:
+          enabled: false
+        kubeScheduler:
+          enabled: false
+        kubeProxy:
+          enabled: false
         grafana:
           admin:
             existingSecret: grafana-admin
@@ -21,6 +30,23 @@ spec:
             passwordKey: admin-password
           service:
             type: ClusterIP
+          persistence:
+            enabled: true
+            storageClassName: managed-csi
+            size: 4Gi
+          deploymentStrategy:
+            type: Recreate
+          initChownData:
+            enabled: false
+          securityContext:
+            runAsNonRoot: true
+            runAsUser: 472
+            runAsGroup: 472
+            fsGroup: 472
+            seccompProfile: { type: RuntimeDefault }
+          resources:
+            requests: { cpu: 50m, memory: 128Mi }
+            limits: { cpu: 500m, memory: 512Mi }
           sidecar:
             dashboards:
               searchNamespace: ALL
@@ -31,6 +57,14 @@ spec:
                 release: monitoring
             serviceMonitorNamespaceSelector: {}
             retention: 2d
+            storageSpec:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: [ReadWriteOnce]
+                  storageClassName: managed-csi
+                  resources:
+                    requests:
+                      storage: 16Gi
             resources:
               requests: { cpu: 200m, memory: 512Mi }
               limits: { cpu: '1', memory: 1536Mi }
