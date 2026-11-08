@@ -7,3 +7,5 @@ metadata:
 data:
   purely-health.json: |
 {{ .Files.Get "dashboards/purely-health.json" | indent 4 }}
+  purely-live.json: |
+{{ .Files.Get "dashboards/purely-live.json" | indent 4 }}
