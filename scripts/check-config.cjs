@@ -23,5 +23,13 @@ for (const name of fs.readdirSync('k8s/charts')) {
     if (!t.includes(key)) errors.push(`${p}: missing ${key}`);
   }
 }
+const registryValues = fs.readFileSync('k8s/charts/service-registry/values.yaml', 'utf8');
+const registryPort = Number(registryValues.match(/^  port:\s*(\d+)/m)?.[1]);
+for (const service of fs.readdirSync('microservice-backend', {withFileTypes: true}).filter(entry => entry.isDirectory())) {
+  const config = path.join('microservice-backend', service.name, 'src/main/resources/application.yml');
+  if (!fs.existsSync(config)) continue;
+  const endpoint = fs.readFileSync(config, 'utf8').match(/defaultZone:\s*http:\/\/service-registry\.service-registry\.svc\.cluster\.local:(\d+)\/eureka/);
+  if (endpoint && Number(endpoint[1]) !== registryPort) errors.push(`${config}: Eureka client port differs from the registry Service port`);
+}
 if (errors.length) { console.error(errors.join('\n')); process.exit(1); }
 console.log('Configuration policy: PASS');
