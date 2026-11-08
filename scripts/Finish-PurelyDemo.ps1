@@ -32,7 +32,8 @@ try {
     }
     if (-not $ready) { throw 'The mailbox verification port-forward was not ready.' }
     Write-Host '[VERIFY] Repairing the collection-scoped user directory and exercising reserved demo accounts, catalog, cart and order APIs.'
-    Invoke-Native $python @((Join-Path $PSScriptRoot 'complete-demo.py'),$WorkspaceRoot,$kubectl,$roots,$report) | Out-Host
+    & $python (Join-Path $PSScriptRoot 'complete-demo.py') $WorkspaceRoot $kubectl $roots $report | Tee-Object -FilePath (Join-Path $report 'business-console.log') | Out-Host
+    if ($LASTEXITCODE -ne 0) { throw "Business verification failed. See $report\business-results.csv" }
 } finally {
     if ($forward -and -not $forward.HasExited) { Stop-Process -Id $forward.Id -ErrorAction SilentlyContinue }
 }
