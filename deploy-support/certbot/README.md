@@ -1,0 +1,23 @@
+# Temporary frontend HTTPS bootstrap
+
+`Prepare-PurelyFrontendTls.ps1` creates the frontend LoadBalancer with an Azure
+DNS label, verifies the actual FQDN/IP mapping, and runs a scanned non-root
+Certbot image at an immutable ACR digest. A temporary port-80 backend returns
+only 404 until Certbot serves the ACME HTTP-01 challenge. It never serves
+application files, database credentials or private key files.
+
+The job first validates issuance against the staging CA, then obtains a public
+certificate from the production CA. The operator checks the trusted chain,
+hostname and certificate/private-key match before creating `frontend/purely-tls`.
+The temporary job is deleted after extraction. Private keys remain in the
+excluded ACL-restricted local runtime directory and the Kubernetes TLS Secret.
+
+The later application bootstrap must replace the Service's port-80 challenge
+mapping with the Helm-defined HTTPS mapping using the same bootstrap field
+manager, before applying the frontend Argo CD Application. It must preserve
+the existing Service/IP and DNS annotation.
+
+This is a one-time certificate bootstrap for the temporary demo. It does not
+claim automatic renewal. The final runbook must record certificate expiry;
+the demo must end before expiry or have a separate verified renewal procedure.
+The public frontend certificate is separate from the internal MongoDB/SMTP CA.
