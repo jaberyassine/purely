@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mongodb-demo
+description: TLS-protected standalone MongoDB for the temporary Purely demo
+version: 0.1.0
+appVersion: "8.0.34"

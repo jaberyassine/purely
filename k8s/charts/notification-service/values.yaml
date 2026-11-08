@@ -10,6 +10,12 @@ resources:
   requests: { cpu: 100m, memory: 256Mi }
   limits: { cpu: '1', memory: 768Mi }
 env:
+  - name: SMTP_PORT
+    value: '587'
+  - name: SPRING_APPLICATION_JSON
+    value: '{"spring":{"mail":{"properties":{"mail.smtp.ssl.checkserveridentity":true}}}}'
+  - name: JAVA_TOOL_OPTIONS
+    value: '-Djavax.net.ssl.trustStore=/etc/purely/trust/truststore.p12 -Djavax.net.ssl.trustStoreType=PKCS12 -Djavax.net.ssl.trustStorePassword=changeit'
   - name: SMTP_HOST
     valueFrom:
       secretKeyRef: { name: smtp-secret, key: smtp-host }
@@ -24,3 +30,7 @@ prometheus:
   releaseLabel: monitoring
   path: /actuator/prometheus
   interval: 15s
+
+runtimeTrust:
+  enabled: true
+  secretName: runtime-trust

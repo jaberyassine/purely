@@ -1,0 +1,84 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mailpit
+spec:
+  type: ClusterIP
+  selector: { app: purely-mailpit }
+  ports:
+    - { name: smtp, port: 587, targetPort: smtp }
+    - { name: https, port: 8025, targetPort: https }
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mailpit
+spec:
+  serviceName: mailpit
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy: { whenDeleted: Retain, whenScaled: Retain }
+  selector:
+    matchLabels: { app: purely-mailpit }
+  template:
+    metadata:
+      labels: { app: purely-mailpit }
+    spec:
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 30
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+        runAsGroup: 10001
+        fsGroup: 10001
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: mailpit
+          image: {{ required "Supply the scanned ACR image digest" .Values.image | quote }}
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          ports:
+            - { name: smtp, containerPort: 1025 }
+            - { name: https, containerPort: 8025 }
+          env:
+            - { name: MP_DATABASE, value: /data/mailpit.db }
+            - { name: MP_MAX_MESSAGES, value: '500' }
+            - { name: MP_ALLOWED_HOSTS, value: 'mailpit.purely-data.svc.cluster.local,localhost' }
+            - { name: MP_SMTP_TLS_CERT, value: /etc/mailpit/tls/tls.crt }
+            - { name: MP_SMTP_TLS_KEY, value: /etc/mailpit/tls/tls.key }
+            - { name: MP_SMTP_REQUIRE_STARTTLS, value: 'true' }
+            - { name: MP_UI_TLS_CERT, value: /etc/mailpit/tls/tls.crt }
+            - { name: MP_UI_TLS_KEY, value: /etc/mailpit/tls/tls.key }
+            - name: MP_SMTP_AUTH
+              valueFrom:
+                secretKeyRef: { name: mailpit-auth, key: smtp-auth }
+            - name: MP_UI_AUTH
+              valueFrom:
+                secretKeyRef: { name: mailpit-auth, key: ui-auth }
+          startupProbe:
+            tcpSocket: { port: https }
+            periodSeconds: 3
+            failureThreshold: 40
+          readinessProbe:
+            tcpSocket: { port: https }
+          livenessProbe:
+            tcpSocket: { port: https }
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - { name: data, mountPath: /data }
+            - { name: tls, mountPath: /etc/mailpit/tls, readOnly: true }
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - name: tls
+          secret: { secretName: mailpit-tls, defaultMode: 0440 }
+        - { name: tmp, emptyDir: { sizeLimit: 64Mi } }
+  volumeClaimTemplates:
+    - metadata: { name: data }
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: managed-csi
+        resources:
+          requests: { storage: 4Gi }
