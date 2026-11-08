@@ -1,7 +1,7 @@
 replicaCount: 1
 image:
-  repository: purelyacr.azurecr.io/notification-service
-  tag: unreleased
+  repository: purelyys71154f86.azurecr.io/notification-service
+  tag: d72c22acfe7750877ef8bfd0d3567813edfb5f47
 service:
   type: ClusterIP
   port: 80
