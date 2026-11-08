@@ -15,6 +15,9 @@ from urllib.request import Request, urlopen
 
 def main():
     project, report = map(Path, sys.argv[1:3])
+    extra = sys.argv[3:] == ['--extra']
+    if sys.argv[3:] not in ([], ['--extra']):
+        raise RuntimeError('Unexpected catalog selection')
     endpoint = json.loads((project / '.validation/frontend-tls/endpoint.json').read_text(encoding='utf-8-sig'))
     if endpoint['Domain'] != 'purely-demo-71154f86.eastus.cloudapp.azure.com':
         raise RuntimeError('Unexpected demo endpoint')
@@ -58,8 +61,9 @@ def main():
         raise RuntimeError('The reserved account is not an administrator')
     token = identity['token']
     categories = json.loads((project / 'sample data/purely_category_service.categories.json').read_text(encoding='utf-8-sig'))
-    products = json.loads((project / 'sample data/purely_product_service.products.json').read_text(encoding='utf-8-sig'))
-    if len(categories) != 5 or len(products) != 10:
+    product_file = 'demo-extra-products.json' if extra else 'purely_product_service.products.json'
+    products = json.loads((project / 'sample data' / product_file).read_text(encoding='utf-8-sig'))
+    if len(categories) != 5 or len(products) != (15 if extra else 10):
         raise RuntimeError('Unexpected bundled demo catalog')
     existing_categories = {item['categoryName']: item for item in api('/category-service/category/get/all')}
     mappings = {}
@@ -103,7 +107,7 @@ def main():
     public = {item['id'] for item in api('/product-service/product/get/all')}
     if not all(row['Id'] in public for row in rows):
         raise RuntimeError('Public catalog verification failed')
-    print('[PASS] Ten demo products visible in five categories. Existing products were preserved; no passwords or tokens were logged.', flush=True)
+    print('[PASS] ' + str(len(products)) + ' demo products visible in five categories. Existing products were preserved; no passwords or tokens were logged.', flush=True)
 
 
 if __name__ == '__main__':
