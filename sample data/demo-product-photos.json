@@ -121,15 +121,22 @@
   },
   {
     "product": "Vanilla Scented Candle",
-    "url": "https://kmartau.mo.cloudinary.net/1871f881-80b7-447a-bbd8-2be82c12535f.jpg?tx=w_1920",
+    "url": "https://fontanacandlecompany.com/cdn/shop/files/web-b3-Fontana_Candle_Company_r1_03F_9196.jpg?v=1762198891",
     "title": "Vanilla Scented Glass Candle",
-    "source": "https://www.kmart.com.au/product/vanilla-and-jasmine-fragrant-candle-in-glass-42350828/"
+    "source": "https://fontanacandlecompany.com/products/pure-vanilla-candle",
+    "alternatives": [
+      "https://bowandarrowcandleco.com/cdn/shop/products/il_fullxfull.2207518085_boxa_1024x1024.jpg?v=1641957189"
+    ]
   },
   {
     "product": "Massage Ball",
-    "url": "https://www.bstaendig.at/shop/media/catalog/product/cache/0be0c23ba70453d56aedac07723c9eee/b/s/bstaendig-blackroll-ball-08-schwarz.jpg",
+    "url": "https://cdn.media.amplience.net/i/frasersdev/40140906_o.jpg?v=20250220203021",
     "title": "BLACKROLL® Fascia Massage Ball",
-    "source": "https://www.bstaendig.at/shop/de/blackrollr-ball.html"
+    "source": "https://www.sportsdirect.com/myga-cork-massage-ball-10cm-401409",
+    "alternatives": [
+      "https://ananday.com/cdn/shop/files/Ananday_CorkMassageBall_Set_01_v3_2048x2048.png?v=1739220703",
+      "https://trnr.jp/cdn/shop/files/TRNR-Cork-Balls-set-1.png?v=1723712070"
+    ]
   },
   {
     "product": "Demo Wellness Kit",

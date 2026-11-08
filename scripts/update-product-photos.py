@@ -18,6 +18,9 @@ from urllib.request import Request, urlopen
 
 def main():
     project, report = map(Path, sys.argv[1:3])
+    if sys.argv[3:] not in ([], ['--remaining']):
+        raise RuntimeError('Unexpected photo update selection')
+    remaining = sys.argv[3:] == ['--remaining']
     domain = json.loads((project / '.validation/frontend-tls/endpoint.json').read_text(encoding='utf-8-sig'))['Domain']
     if domain != 'purely-demo-71154f86.eastus.cloudapp.azure.com':
         raise RuntimeError('Unexpected demo endpoint')
@@ -57,6 +60,8 @@ def main():
     products = api('/product-service/product/get/all')
     plan = []
     for photo in manifest:
+        if remaining and photo['product'] not in {'Vanilla Scented Candle', 'Massage Ball'}:
+            continue
         matches = [item for item in products if item['productName'] == photo['product'] or
                    (photo['product'] == 'Demo Wellness Kit' and item['productName'] == 'Demo Wellness Kit ' + accounts['suffix'])]
         if len(matches) > 1:
@@ -70,7 +75,7 @@ def main():
 
     def check(entry):
         product, photo = entry
-        candidates = list(dict.fromkeys([photo['url'], alternatives.get(photo['product'])]))
+        candidates = list(dict.fromkeys([photo['url']] + photo.get('alternatives', []) + [alternatives.get(photo['product'])]))
         for url in candidates:
             if not url or urlparse(url).scheme != 'https':
                 continue
