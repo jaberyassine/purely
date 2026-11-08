@@ -28,3 +28,12 @@ urllib3 and setuptools were already patched. The image removes the unneeded
 pip installer and all its vendored code. Build checks require pip to be absent
 and Certbot/plugin discovery to work as the non-root runtime user. No SBOMs,
 scanner rules or vulnerability exceptions are edited.
+
+After the configuration PR is merged, `Start-PurelyApplication.ps1` fetches
+master, checks the runtime Secrets and ready database/mailbox, then applies
+the monitoring Application before any app ServiceMonitors. It starts Eureka
+first, reconciles the backend Applications, transfers the existing frontend
+Service to the HTTPS mapping, and starts the frontend. The final smoke check
+validates public TLS/HTML/HSTS, blocked actuator routes and Prometheus UP
+targets across all nine backend namespaces. Business flows still require their
+own end-to-end verification.
