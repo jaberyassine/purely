@@ -15,11 +15,12 @@ export const CartProvider = ({ children }) => {
   const user = JSON.parse(localStorage.getItem("user"));
 
   const authHeader = () => {
-    return { Authorization: `${user?.type}${user?.token}` };
+    return { Authorization: `Bearer ${user?.token}` };
   };
 
   const addItemToCart = async (productId, quantity) => {
     setProcessing(true);
+    let success = false;
     await axios
       .post(
         `${API_BASE_URL}/cart-service/cart/add`,
@@ -28,12 +29,14 @@ export const CartProvider = ({ children }) => {
       )
       .then(() => {
         setError(false);
+        success = true;
       })
       .catch(() => {
         setError(true);
       });
     setProcessing(false);
-    getCartInformation();
+    await getCartInformation();
+    return success;
   };
 
   const updateItemQuantity = async (productId, quantity) => {

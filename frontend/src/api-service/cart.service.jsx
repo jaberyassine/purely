@@ -9,7 +9,7 @@ function CartService() {
     const user = JSON.parse(localStorage.getItem("user"));
 
     const authHeader = () => {
-        return { Authorization: `${user?.type}${user?.token}` };
+        return { Authorization: `Bearer ${user?.token}` };
     }
 
     const addItemToCart = async (productId, quantity) => {

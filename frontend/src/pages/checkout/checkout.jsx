@@ -1,7 +1,9 @@
-import Logo from "../../components/logo/logo";
+
+import Header from "../../components/header/header";
+import Footer from "../../components/footer/footer";
 import "./checkout.css";
 import { useForm } from "react-hook-form";
-import CopyRight from "../../components/footer/copyright";
+
 import OrderService from "../../api-service/order.service";
 import { useContext, useEffect } from "react";
 import CartContext from "../../contexts/cart.contect";
@@ -9,7 +11,7 @@ import { Link, useNavigate } from "react-router-dom";
 
 const CheckoutForm = () => {
   const { register, handleSubmit, formState } = useForm();
-  const { isLoading, error, placeOrder } = OrderService();
+  const { isLoading, orderError: error, placeOrder } = OrderService();
   const { cart, clearCart } = useContext(CartContext);
   const navigate = useNavigate();
 
@@ -17,7 +19,7 @@ const CheckoutForm = () => {
     try {
       await placeOrder(data, cart.cartId);
       clearCart();
-      navigate("/");
+      navigate("/order/success");
     } catch (e) {
       // error handling if needed
     }
@@ -25,10 +27,8 @@ const CheckoutForm = () => {
 
   return (
     <>
-      <header className="app-header">
-        <Logo />
-      </header>
-      <div className="checkout-container">
+      <Header />
+      <main className="checkout-container" id="page-content">
         <h1>Checkout</h1>
         <div className="checkout-wrapper">
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -40,6 +40,7 @@ const CheckoutForm = () => {
               <input
                 type="text"
                 className="form-control"
+                id="fname"
                 placeholder="Eg. John"
                 {...register("fname", {
                   required: "First name is required!",
@@ -58,6 +59,7 @@ const CheckoutForm = () => {
               <input
                 type="text"
                 className="form-control"
+                id="lname"
                 placeholder="Eg. Smith"
                 {...register("lname", {
                   required: "Last name is required!",
@@ -76,6 +78,7 @@ const CheckoutForm = () => {
               <input
                 type="text"
                 className="form-control"
+                id="address1"
                 placeholder="Eg. House No, Street No, Area"
                 {...register("address1", {
                   required: "Address line 1 is required!",
@@ -94,6 +97,7 @@ const CheckoutForm = () => {
               <input
                 type="text"
                 className="form-control"
+                id="address2"
                 placeholder="Eg. Suite no / floor No"
                 {...register("address2")}
               />
@@ -105,7 +109,8 @@ const CheckoutForm = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Eg. Point Pedro"
+                id="city"
+                placeholder="Your city"
                 {...register("city", {
                   required: "City is required!",
                 })}
@@ -123,7 +128,8 @@ const CheckoutForm = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Eg. 07xxxxxxxx"
+                id="phone"
+                placeholder="Your phone number"
                 {...register("phone", {
                   required: "Phone is required!",
                 })}
@@ -136,6 +142,7 @@ const CheckoutForm = () => {
             </div>
             <button
               type="submit"
+              disabled={isLoading || !cart?.cartItems?.length}
               className={isLoading ? "loading" : ""}
               name="proceed"
             >
@@ -164,8 +171,7 @@ const CheckoutForm = () => {
             </h3>
             <br />
             <small>
-              Delivary charges will be added to above total at you door step by
-              our staffs when we deliver your order.
+              This is a demo order. No payment or physical delivery is arranged.
             </small>
             <br />
             <Link to="/">
@@ -173,8 +179,8 @@ const CheckoutForm = () => {
             </Link>
           </summary>
         </div>
-      </div>
-      <CopyRight />
+      </main>
+      <Footer />
     </>
   );
 };

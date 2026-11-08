@@ -10,7 +10,6 @@ function AuthService() {
   const navigate = useNavigate();
 
   const login = async (email, password) => {
-    console.log(email, password);
     setLoading(true);
     await axios
       .post(`${API_BASE_URL}/auth-service/auth/signin`, {
@@ -25,7 +24,6 @@ function AuthService() {
         }
       })
       .catch((error) => {
-        console.log(error);
         setResponse(null);
         const resMessage =
           (error.response &&
@@ -51,7 +49,6 @@ function AuthService() {
         password,
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.success) {
           setResponse(true);
           setError(null);
@@ -59,7 +56,6 @@ function AuthService() {
         }
       })
       .catch((error) => {
-        console.error(error);
         setResponse(null);
         if (error.response) {
           setError(error.response.data.message);
@@ -79,7 +75,6 @@ function AuthService() {
         },
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.success) {
           setResponse(true);
           setError(null);
@@ -87,7 +82,6 @@ function AuthService() {
         }
       })
       .catch((error) => {
-        console.error(error);
         setResponse(null);
         if (error.response) {
           setError(error.response.data.message);
@@ -106,14 +100,12 @@ function AuthService() {
         },
       })
       .then((response) => {
-        console.log(response.data);
         if (response.data.success) {
           setResponse(true);
           setError(null);
         }
       })
       .catch((error) => {
-        console.error(error);
         setResponse(null);
         if (error.response) {
           setError(error.response.data.message);

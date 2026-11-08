@@ -1,33 +1,21 @@
-h1.logo {
-    display: flex;
-    align-items: center;
-    justify-content: left;
-    color: var(--light);
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #244c3c;
+  line-height: 1;
+  white-space: nowrap;
 }
-
-h1.logo span {
-    height: 30px;
-    width: 30px;
-    display: inline-block;
-    background-image: url('../../assets/images/icons/logo.png');
-    background-size: 100%;
-    background-position: center;
-    background-repeat: no-repeat;
-    margin-right: 5px;
+.brand>svg {
+  width: 32px;
+  height: 38px;
 }
-@media all and (max-width: 500px) {
-    h1.logo {
-        font-size: 22px;
-    }
-    
-    h1.logo span {
-        height: 22px;
-        width: 22px;
-        display: inline-block;
-        background-image: url('../../assets/images/icons/logo.png');
-        background-size: 100%;
-        background-position: center;
-        background-repeat: no-repeat;
-        margin-right: 5px;
-    }
+.brand>span {
+  font-family: Georgia,'Times New Roman',serif;
+  font-size: 43px;
+  letter-spacing: -2px;
+  font-weight: 600;
+}
+.brand-dot {
+  color: #9aab7a;
 }
