@@ -1,4 +1,4 @@
-[CmdletBinding()]
+﻿[CmdletBinding()]
 param([string]$WorkspaceRoot = (Split-Path -Parent (Split-Path -Parent $PSScriptRoot)))
 $ErrorActionPreference = 'Stop'
 $project = Join-Path $WorkspaceRoot 'purely-ready'
@@ -112,25 +112,6 @@ if (@($svc.spec.ports).Count -ne 1 -or $svc.spec.ports[0].port -ne 443) { throw 
 Invoke-Kubectl @('apply','-f',(Join-Path $argo 'frontend-app.yaml')) | Out-Host
 Wait-ArgoApplication 'frontend' 600
 
-$services = ((Invoke-Kubectl @('get','services','-n','monitoring','-o','json') | Out-String) | ConvertFrom-Json).items
-$prometheus = @($services | Where-Object { $_.spec.selector.prometheus -and @($_.spec.ports | Where-Object port -eq 9090).Count -gt 0 })
-if ($prometheus.Count -ne 1) { throw 'Could not uniquely identify the Prometheus API service.' }
-if (Get-NetTCPConnection -State Listen -LocalPort 19090 -ErrorAction SilentlyContinue) { throw 'Local verification port 19090 is already in use. No existing process was stopped.' }
-$forward = $null
-try {
-    $outLog=Join-Path $report 'prometheus-forward-out.log'; $errLog=Join-Path $report 'prometheus-forward-error.log'
-    $forward=Start-Process -FilePath $kubectl -ArgumentList @("--kubeconfig=$config",'--context=purely-demo','-n','monitoring','port-forward',('service/' + $prometheus[0].metadata.name),'19090:9090','--address=127.0.0.1') -PassThru -WindowStyle Hidden -RedirectStandardOutput $outLog -RedirectStandardError $errLog
-    $ready=$false
-    for($attempt=0;$attempt -lt 20;$attempt++) {
-        if($forward.HasExited){throw "The owned metrics port-forward exited. See $errLog"}
-        if((Test-Path -LiteralPath $outLog) -and (Get-Content -LiteralPath $outLog -Raw) -match 'Forwarding from'){ $ready=$true; break }
-        Start-Sleep -Seconds 1
-    }
-    if(-not $ready){throw 'The metrics verification port-forward was not ready.'}
-    Invoke-Native $python @((Join-Path $PSScriptRoot 'verify-deployment.py'),$endpointPath,$roots) | Tee-Object -FilePath (Join-Path $report 'smoke-results.json') | Out-Host
-} finally { if($forward -and -not $forward.HasExited){Stop-Process -Id $forward.Id -ErrorAction SilentlyContinue} }
-Invoke-Kubectl @('get','applications','-n','argocd') | Out-Host
-Invoke-Kubectl @('get','deployments','-A') | Out-Host
-Write-Host "[PASS] Purely is deployed at https://$($endpoint.Domain), with verified TLS and all nine backend metrics namespaces UP."
-Write-Host "Reports: $report"
+& (Join-Path $PSScriptRoot 'Test-PurelyDeployment.ps1') -WorkspaceRoot $WorkspaceRoot -ReportDirectory $report
+if (-not $?) { throw 'The deployed application did not pass verification.' }
 Write-Host 'Next: verify registration, login, catalog, cart and order flow in the deployed application.'
