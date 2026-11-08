@@ -1,45 +1,23 @@
 replicaCount: 1
-
 image:
   repository: purelyacr.azurecr.io/auth-service
-  tag: latest
-  pullPolicy: IfNotPresent
-
+  tag: unreleased
 service:
   type: ClusterIP
   port: 80
   targetPort: 9031
-
 resources:
-  limits:
-    cpu: 500m
-    memory: 512Mi
-  requests:
-    cpu: 200m
-    memory: 256Mi
-
+  requests: { cpu: 100m, memory: 256Mi }
+  limits: { cpu: '1', memory: 768Mi }
 env:
   - name: MONGODB_URI
     valueFrom:
-      secretKeyRef:
-        name: mongodb-secret
-        key: uri
-  - name: APP_JWTSECRET
+      secretKeyRef: { name: mongodb-secret, key: uri }
+  - name: JWT_SECRET
     valueFrom:
-      secretKeyRef:
-        name: auth-config
-        key: APP_JWTSECRET
-
-  - name: APP_JWTEXPIRATIONMS
-    valueFrom:
-      secretKeyRef:
-        name: auth-config
-        key: APP_JWTEXPIRATIONMS
-
+      secretKeyRef: { name: auth-secret, key: jwt-secret }
 prometheus:
   enabled: true
+  releaseLabel: monitoring
   path: /actuator/prometheus
   interval: 15s
-
-mongodb:
-  uri: "mongodb+srv://jberyassine:Rachide2000@cluster0.zc1yfw6.mongodb.net/sample_mflix?retryWrites=true&w=majority&appName=Cluster0"

@@ -1,0 +1,4 @@
+"Identity","ExpectedStatus","VerifiedStatus","Status","Method"
+"Anonymous","401","401","PASS","Spring Boot MockMvc; real security chain; mocked auth/business clients"
+"ROLE_USER","403","403","PASS","Spring Boot MockMvc; JSON response; no sendError; no business mutation"
+"ROLE_ADMIN","200","200","PASS","Spring Boot MockMvc; permitted controller call"

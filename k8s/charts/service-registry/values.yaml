@@ -1,26 +1,17 @@
 replicaCount: 1
-
 image:
   repository: purelyacr.azurecr.io/service-registry
-  tag: latest
-  pullPolicy: IfNotPresent
-
+  tag: unreleased
 service:
   type: ClusterIP
-  port: 8761
+  port: 80
   targetPort: 8761
-
 resources:
-  limits:
-    cpu: 300m
-    memory: 512Mi
-  requests:
-    cpu: 150m
-    memory: 256Mi
-
+  requests: { cpu: 100m, memory: 256Mi }
+  limits: { cpu: '1', memory: 768Mi }
 env: []
-
 prometheus:
   enabled: true
+  releaseLabel: monitoring
   path: /actuator/prometheus
   interval: 15s

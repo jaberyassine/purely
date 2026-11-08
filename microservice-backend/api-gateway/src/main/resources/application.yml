@@ -1,137 +1,81 @@
 server:
   port: 8081
-
 spring:
   application:
     name: api-gateway
   cloud:
     gateway:
-      discovery:
-        locator:
-          enabled: false   # عندك Routes مخصّصة، فمو محتاج الـLocator
-      default-filters:
-        - DedupeResponseHeader=Access-Control-Allow-Credentials Access-Control-Allow-Origin
-      globalcors:
-        cors-configurations:
-          "[/**]":
-            allowedOrigins: "*"
-            allowedMethods: "*"
-            allowedHeaders: "*"
-      routes:
-        # =================== AUTH-SERVICE ===================
-        - id: auth-service-actuator
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: auth-service
-          uri: lb://AUTH-SERVICE
-          predicates:
-            - Path=/auth-service/**
-          filters:
-            - StripPrefix=1
-
-        # ============== NOTIFICATION-SERVICE ===============
-        - id: notification-service-actuator
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/notification-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: notification-service
-          uri: lb://NOTIFICATION-SERVICE
-          predicates:
-            - Path=/notification-service/**
-          filters:
-            - StripPrefix=1
-
-        # ================= CATEGORY-SERVICE =================
-        - id: category-service-actuator
-          uri: lb://CATEGORY-SERVICE
-          predicates:
-            - Path=/category-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: category-service
-          uri: lb://CATEGORY-SERVICE
-          predicates:
-            - Path=/category-service/**
-          filters:
-            - StripPrefix=1
-
-        # ================== PRODUCT-SERVICE =================
-        - id: product-service-actuator
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/product-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: product-service
-          uri: lb://PRODUCT-SERVICE
-          predicates:
-            - Path=/product-service/**
-          filters:
-            - StripPrefix=1
-
-        # =================== USER-SERVICE ===================
-        - id: user-service-actuator
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: user-service
-          uri: lb://USER-SERVICE
-          predicates:
-            - Path=/user-service/**
-          filters:
-            - StripPrefix=1
-
-        # =================== CART-SERVICE ===================
-        - id: cart-service-actuator
-          uri: lb://CART-SERVICE
-          predicates:
-            - Path=/cart-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: cart-service
-          uri: lb://CART-SERVICE
-          predicates:
-            - Path=/cart-service/**
-          filters:
-            - StripPrefix=1
-
-        # ================== ORDER-SERVICE ===================
-        - id: order-service-actuator
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/order-service/actuator/**
-          filters:
-            - StripPrefix=1
-        - id: order-service
-          uri: lb://ORDER-SERVICE
-          predicates:
-            - Path=/order-service/**
-          filters:
-            - StripPrefix=1
-
+      server:
+        webflux:
+          routes:
+            - id: auth-service
+              uri: lb://AUTH-SERVICE
+              predicates:
+                - Path=/auth-service/**
+              filters:
+                - StripPrefix=1
+            - id: cart-service
+              uri: lb://CART-SERVICE
+              predicates:
+                - Path=/cart-service/**
+              filters:
+                - StripPrefix=1
+            - id: category-service
+              uri: lb://CATEGORY-SERVICE
+              predicates:
+                - Path=/category-service/**
+              filters:
+                - StripPrefix=1
+            - id: notification-service
+              uri: lb://NOTIFICATION-SERVICE
+              predicates:
+                - Path=/notification-service/**
+              filters:
+                - StripPrefix=1
+            - id: order-service
+              uri: lb://ORDER-SERVICE
+              predicates:
+                - Path=/order-service/**
+              filters:
+                - StripPrefix=1
+            - id: product-service
+              uri: lb://PRODUCT-SERVICE
+              predicates:
+                - Path=/product-service/**
+              filters:
+                - StripPrefix=1
+            - id: user-service
+              uri: lb://USER-SERVICE
+              predicates:
+                - Path=/user-service/**
+              filters:
+                - StripPrefix=1
 eureka:
   client:
     serviceUrl:
       defaultZone: http://service-registry.service-registry.svc.cluster.local:8761/eureka
     register-with-eureka: true
     fetch-registry: true
-    registry-fetch-interval-seconds: 10
   instance:
     prefer-ip-address: true
     instance-id: ${spring.application.name}:${server.port}:${random.value}
-
 management:
   endpoints:
     web:
       exposure:
         include: health,info,prometheus
   endpoint:
-    prometheus:
-      enabled: true
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        readiness:
+          include: readinessState
+  metrics:
+    tags:
+      application: ${spring.application.name}
+server.shutdown: graceful
+spring.lifecycle.timeout-per-shutdown-phase: 20s
+management.metrics.distribution.percentiles-histogram.http.server.requests: true
+spring.jackson.use-jackson2-defaults: true

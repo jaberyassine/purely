@@ -1,6 +1,6 @@
 package com.dharshi.userservice.security;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.json.JsonMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -34,7 +34,7 @@ public class AuthEntryPointJwt implements AuthenticationEntryPoint {
         body.put("message", authException.getMessage());
         body.put("path", request.getServletPath());
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final JsonMapper mapper = JsonMapper.builder().build();
         mapper.writeValue(response.getOutputStream(), body);
     }
 }

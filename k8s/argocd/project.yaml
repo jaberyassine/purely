@@ -1,0 +1,37 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: purely
+  namespace: argocd
+spec:
+  description: Purely application workloads
+  sourceRepos: ['https://github.com/jaberyassine/purely.git']
+  destinations:
+    - namespace: api-gateway
+      server: https://kubernetes.default.svc
+    - namespace: auth-service
+      server: https://kubernetes.default.svc
+    - namespace: cart-service
+      server: https://kubernetes.default.svc
+    - namespace: category-service
+      server: https://kubernetes.default.svc
+    - namespace: notification-service
+      server: https://kubernetes.default.svc
+    - namespace: order-service
+      server: https://kubernetes.default.svc
+    - namespace: product-service
+      server: https://kubernetes.default.svc
+    - namespace: service-registry
+      server: https://kubernetes.default.svc
+    - namespace: user-service
+      server: https://kubernetes.default.svc
+    - namespace: frontend
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - { group: '', kind: Namespace }
+  namespaceResourceWhitelist:
+    - { group: apps, kind: Deployment }
+    - { group: '', kind: Service }
+    - { group: '', kind: ConfigMap }
+    - { group: monitoring.coreos.com, kind: ServiceMonitor }
+    - { group: policy, kind: PodDisruptionBudget }

@@ -1,10 +1,13 @@
+replicaCount: 2
 image:
   repository: purelyacr.azurecr.io/frontend-app
-  tag: latest
+  tag: unreleased
   pullPolicy: IfNotPresent
-
 service:
-  type: ClusterIP
-  port: 80
-
-resources: {}
+  type: LoadBalancer
+  port: 443
+tls:
+  secretName: purely-tls
+resources:
+  requests: { cpu: 50m, memory: 64Mi }
+  limits: { cpu: 250m, memory: 128Mi }

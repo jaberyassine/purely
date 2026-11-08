@@ -13,7 +13,7 @@ public interface OrderService {
 
     ResponseEntity<ApiResponseDto<?>> getOrdersByUser(String userId) throws ResourceNotFoundException, ServiceLogicException;
 
-    ResponseEntity<ApiResponseDto<?>> cancelOrder(String orderId) throws ServiceLogicException, ResourceNotFoundException;
+    ResponseEntity<ApiResponseDto<?>> cancelOrder(String orderId, String userId) throws ServiceLogicException, ResourceNotFoundException;
 
     ResponseEntity<ApiResponseDto<?>> getAllOrders() throws ServiceLogicException;
 }

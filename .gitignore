@@ -30,3 +30,21 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+# Local credentials, state, generated files
+.env
+.env.*
+!.env.example
+**/.terraform/
+*.tfstate
+*.tfstate.*
+*.tfplan
+*.tfvars
+*.tfvars.json
+!*.tfvars.example
+*.pem
+*.key
+*.pfx
+*.kubeconfig
+.secrets/
+artifacts/
+.validation/

@@ -108,10 +108,10 @@ public class OrderServiceImpl implements OrderService {
 
 
     @Override
-    public ResponseEntity<ApiResponseDto<?>> cancelOrder(String orderId) throws ServiceLogicException, ResourceNotFoundException {
+    public ResponseEntity<ApiResponseDto<?>> cancelOrder(String orderId, String userId) throws ServiceLogicException, ResourceNotFoundException {
         try {
-            if(orderRepository.existsById(orderId)) {
-                Order order = orderRepository.findById(orderId).orElse(null);
+            Order order = orderRepository.findByIdAndUserId(orderId, userId).orElse(null);
+            if(order != null) {
                 order.setOrderStatus(EOrderStatus.CANCELLED);
                 orderRepository.save(order);
                 return ResponseEntity.ok(

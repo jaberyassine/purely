@@ -1,0 +1,31 @@
+server:
+  port: 8761
+spring:
+  application:
+    name: service-registry
+eureka:
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+  instance:
+    hostname: service-registry
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      probes:
+        enabled: true
+      show-details: never
+      group:
+        readiness:
+          include: readinessState
+  metrics:
+    tags:
+      application: ${spring.application.name}
+server.shutdown: graceful
+spring.lifecycle.timeout-per-shutdown-phase: 20s
+management.metrics.distribution.percentiles-histogram.http.server.requests: true
+spring.jackson.use-jackson2-defaults: true

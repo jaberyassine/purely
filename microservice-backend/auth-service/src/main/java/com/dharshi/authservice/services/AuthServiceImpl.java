@@ -236,7 +236,8 @@ public class AuthServiceImpl implements AuthService {
                 .username(signUpRequestDto.getUserName())
                 .password(passwordEncoder.encode(signUpRequestDto.getPassword()))
                 .enabled(true)
-                .roles(determineRoles(signUpRequestDto.getRoles()))
+                // Public registration must never accept caller-selected privileges.
+                .roles(Set.of(roleFactory.getInstance("user")))
                 .build();
     }
 
@@ -247,19 +248,6 @@ public class AuthServiceImpl implements AuthService {
     private Date calculateCodeExpirationTime() {
         long currentTimeInMs = System.currentTimeMillis();
         return new Date(currentTimeInMs + EXPIRY_PERIOD);
-    }
-
-    private Set<Role> determineRoles(Set<String> strRoles) throws RoleNotFoundException {
-        Set<Role> roles = new HashSet<>();
-
-        if (strRoles == null) {
-            roles.add(roleFactory.getInstance("user"));
-        } else {
-            for (String role : strRoles) {
-                roles.add(roleFactory.getInstance(role));
-            }
-        }
-        return roles;
     }
 
     private void removeDisabledUser(String id) {

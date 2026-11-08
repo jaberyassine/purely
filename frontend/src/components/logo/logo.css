@@ -24,7 +24,7 @@ h1.logo span {
         height: 22px;
         width: 22px;
         display: inline-block;
-        background-image: url('../images/icons/logo.png');
+        background-image: url('../../assets/images/icons/logo.png');
         background-size: 100%;
         background-position: center;
         background-repeat: no-repeat;
