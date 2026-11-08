@@ -1,0 +1,95 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector: { app: purely-mongodb }
+  ports:
+    - { name: mongodb, port: 27017, targetPort: mongodb }
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: mongodb
+automountServiceAccountToken: false
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongodb
+spec:
+  serviceName: mongodb
+  replicas: 1
+  persistentVolumeClaimRetentionPolicy: { whenDeleted: Retain, whenScaled: Retain }
+  selector:
+    matchLabels: { app: purely-mongodb }
+  template:
+    metadata:
+      labels: { app: purely-mongodb }
+    spec:
+      serviceAccountName: mongodb
+      automountServiceAccountToken: false
+      terminationGracePeriodSeconds: 60
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+        fsGroupChangePolicy: OnRootMismatch
+        seccompProfile: { type: RuntimeDefault }
+      containers:
+        - name: mongodb
+          image: {{ required "Supply the scanned ACR image digest" .Values.image | quote }}
+          args:
+            - --auth
+            - --bind_ip_all
+            - --dbpath=/data/db
+            - --wiredTigerCacheSizeGB=0.5
+            - --tlsMode=requireTLS
+            - --tlsCertificateKeyFile=/etc/mongodb/tls/server.pem
+            - --tlsCAFile=/etc/mongodb/tls/ca.crt
+            - --tlsAllowConnectionsWithoutCertificates
+          ports:
+            - { name: mongodb, containerPort: 27017 }
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            capabilities: { drop: [ALL] }
+          startupProbe:
+            tcpSocket: { port: mongodb }
+            periodSeconds: 5
+            failureThreshold: 60
+          readinessProbe:
+            exec:
+              command: [mongosh, --quiet, --tls, --tlsCAFile, /etc/mongodb/tls/ca.crt, --host, localhost, --eval, "quit(db.adminCommand({ping:1}).ok ? 0 : 1)"]
+            periodSeconds: 10
+            timeoutSeconds: 5
+          livenessProbe:
+            tcpSocket: { port: mongodb }
+            periodSeconds: 15
+          env:
+            - { name: HOME, value: /tmp }
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - { name: data, mountPath: /data/db }
+            - { name: tls, mountPath: /etc/mongodb/tls, readOnly: true }
+            - { name: bootstrap, mountPath: /bootstrap, readOnly: true }
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - name: tls
+          secret: { secretName: mongodb-tls, defaultMode: 0440 }
+        - name: bootstrap
+          secret: { secretName: mongodb-bootstrap, defaultMode: 0440 }
+        - { name: tmp, emptyDir: { sizeLimit: 128Mi } }
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: [ReadWriteOnce]
+        storageClassName: {{ .Values.storageClass | quote }}
+        resources:
+          requests:
+            storage: {{ .Values.storageSize | quote }}
