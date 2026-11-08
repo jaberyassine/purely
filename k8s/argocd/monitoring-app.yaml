@@ -5,6 +5,8 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
+    # Bootstrap CRDs and their custom resources without requiring cached schemas for diff.
+    argocd.argoproj.io/compare-options: ServerSideDiff=false
 spec:
   project: default
   source:

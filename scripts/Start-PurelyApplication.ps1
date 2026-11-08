@@ -55,16 +55,28 @@ foreach ($name in (@('project','monitoring-app','observability-app') + @($applic
     $path = "k8s/argocd/$name.yaml"
     Read-Git @('show',("${revision}:$path")) | Set-Content -LiteralPath (Join-Path $argo ($name + '.yaml')) -Encoding ASCII
 }
+# Older reviewed revisions may predate the Argo CD 3.6 CRD-bootstrap diff fix.
+# Keep ServerSideApply=true for large CRDs; use legacy diff only for this Application.
+$monitorFile = Join-Path $argo 'monitoring-app.yaml'
+$monitorText = Get-Content -LiteralPath $monitorFile -Raw
+if ($monitorText -notmatch 'argocd.argoproj.io/compare-options:') {
+    $replacement = '$0' + "`n    argocd.argoproj.io/compare-options: ServerSideDiff=false"
+    $monitorText = $monitorText -replace '(?m)^(\s*)argocd\.argoproj\.io/sync-wave: "0"\r?$', $replacement
+    $monitorText | Set-Content -LiteralPath $monitorFile -Encoding ASCII
+}
+if ($monitorText -notmatch 'argocd.argoproj.io/compare-options: ServerSideDiff=false') { throw 'Unexpected monitoring diff configuration. Stop for review.' }
 @{ReviewedMaster=$revision;Frontend=$endpoint.Domain;Applications=$applications;MonitoringChart='92.22.0'} | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $report 'plan.json') -Encoding ASCII
 function Wait-ArgoApplication {
     param([string]$Name,[int]$TimeoutSeconds=900)
     $deadline = [DateTime]::UtcNow.AddSeconds($TimeoutSeconds)
+    $errorGrace = [DateTime]::UtcNow.AddSeconds(30)
     while ([DateTime]::UtcNow -lt $deadline) {
         $app = ((Invoke-Kubectl @('get','application',$Name,'-n','argocd','-o','json') | Out-String) | ConvertFrom-Json)
         $problems = @($app.status.conditions | Where-Object { $_.type -in @('ComparisonError','InvalidSpecError','SyncError') })
-        if ($problems.Count -gt 0) { $problems | Select-Object type,message | Format-List | Out-Host; throw "Argo CD cannot reconcile $Name." }
-        if ($app.status.sync.status -eq 'Synced' -and $app.status.health.status -eq 'Healthy') { Write-Host "[PASS] Argo CD ${Name}: Synced / Healthy"; return }
-        if ($app.status.operationState.phase -eq 'Failed' -or $app.status.operationState.phase -eq 'Error') { $app.status.operationState.message | Out-Host; throw "Argo CD sync failed for $Name." }
+        # A re-apply may still expose conditions from the previous reconcile.
+        if ($problems.Count -gt 0 -and [DateTime]::UtcNow -ge $errorGrace) { $problems | Select-Object type,message | Format-List | Out-Host; throw "Argo CD cannot reconcile $Name." }
+        if ($problems.Count -eq 0 -and $app.status.sync.status -eq 'Synced' -and $app.status.health.status -eq 'Healthy') { Write-Host "[PASS] Argo CD ${Name}: Synced / Healthy"; return }
+        if ($app.status.operationState.phase -in @('Failed','Error') -and [DateTime]::UtcNow -ge $errorGrace) { $app.status.operationState.message | Out-Host; throw "Argo CD sync failed for $Name." }
         Start-Sleep -Seconds 5
     }
     Invoke-Kubectl @('get','pods','-A') | Out-Host
