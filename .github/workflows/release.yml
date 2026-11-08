@@ -71,6 +71,13 @@ jobs:
           -Dsonar.host.url=https://sonarcloud.io
           -Dsonar.scanner.skipJreProvisioning=true
           -Dsonar.qualitygate.wait=true
+      - name: Test frontend and generate real coverage
+        if: matrix.service == 'frontend'
+        working-directory: frontend
+        run: |
+          npm ci
+          npm run test:coverage
+          test -s coverage/lcov.info
       - name: Frontend quality gate
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}

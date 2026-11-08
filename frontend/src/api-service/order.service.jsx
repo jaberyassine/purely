@@ -19,8 +19,8 @@ function OrderService() {
     cart
   ) => {
     setLoading(true);
-    await axios
-      .post(
+    try {
+      const response = await axios.post(
         `${API_BASE_URL}/order-service/order/create`,
         {
           firstName: fname,
@@ -32,18 +32,15 @@ function OrderService() {
           cartId: cart,
         },
         { headers: authHeader() }
-      )
-      .then((response) => {
-        if (!response.data.success) throw new Error('Order was not accepted');
-        setError(null);
-        // Removed redirect after order placement
-      })
-      .catch((error) => {
-        setError('Your order could not be placed. Your bag has been kept; please try again.');
-        throw new Error('Order was not placed');
-      });
-
-    setLoading(false);
+      );
+      if (!response.data.success) throw new Error('Order was not accepted');
+      setError(null);
+    } catch {
+      setError('Your order could not be placed. Your bag has been kept; please try again.');
+      throw new Error('Order was not placed');
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getOrdersByUser = async () => {
