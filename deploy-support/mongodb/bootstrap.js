@@ -12,10 +12,25 @@ if (!authenticated) {
 }
 for (const account of config.services) {
     const database = db.getSiblingDB(account.database);
+    let expected = {role: 'readWrite', db: account.database};
+    if (account.accessMode === 'identity-readonly') {
+        const identity = db.getSiblingDB(account.dataDatabase);
+        const roleName = 'purelyUserDirectoryRead';
+        let role = identity.getRole(roleName, {showPrivileges: true});
+        if (!role) {
+            identity.createRole({role: roleName, privileges: [{resource: {db: account.dataDatabase, collection: 'Users'}, actions: ['find']}], roles: []});
+            role = identity.getRole(roleName, {showPrivileges: true});
+        }
+        if (role.roles.length !== 0 || role.privileges.length !== 1 || role.privileges[0].resource.db !== account.dataDatabase
+            || role.privileges[0].resource.collection !== 'Users' || role.privileges[0].actions.length !== 1 || role.privileges[0].actions[0] !== 'find') {
+            throw new Error('Unexpected identity reader privileges');
+        }
+        expected = {role: roleName, db: account.dataDatabase};
+    }
     const existing = database.getUser(account.user);
-    if (!existing) database.createUser({user: account.user, pwd: account.password, roles: [{role: 'readWrite', db: account.database}]});
-    else if (existing.roles.length !== 1 || existing.roles[0].role !== 'readWrite' || existing.roles[0].db !== account.database) {
+    if (!existing) database.createUser({user: account.user, pwd: account.password, roles: [expected]});
+    else if (existing.roles.length !== 1 || existing.roles[0].role !== expected.role || existing.roles[0].db !== expected.db) {
         throw new Error('Unexpected existing database permissions for ' + account.service);
     }
 }
-print('PASS: administrator and six database-scoped application accounts are ready.');
+print('PASS: administrator and six scoped application accounts are ready.');

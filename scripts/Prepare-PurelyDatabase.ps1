@@ -118,7 +118,9 @@ Invoke-Native 'icacls.exe' @($private,'/inheritance:r','/grant:r',"*${sid}:(OI)(
 if (-not (Test-Path -LiteralPath $configPath)) {
     $accounts = @($services | ForEach-Object {
         $short = $_.Replace('-service','')
-        @{service=$_;database=('purely_' + $short);user=('purely_' + $short);password=(New-HexPassword)}
+        $entry = @{service=$_;database=('purely_' + $short);user=('purely_' + $short);password=(New-HexPassword)}
+        if ($_ -eq 'user-service') { $entry.dataDatabase='purely_auth'; $entry.accessMode='identity-readonly' }
+        $entry
     })
     $settings = @{subscription=$subscription;admin=@{user='purely_db_admin';password=(New-HexPassword)};services=$accounts;jwtSecret=[Convert]::ToBase64String([Text.Encoding]::ASCII.GetBytes((New-HexPassword)));persistenceToken=(New-HexPassword)}
     $settings | ConvertTo-Json -Depth 10 | Set-Content -LiteralPath $configPath -Encoding ASCII
@@ -157,7 +159,8 @@ Apply-Secret $namespace 'mongodb-tls' @{'ca.crt'=[IO.File]::ReadAllBytes($ca);'s
 $bootstrapUsers = $settings | Select-Object admin,services,persistenceToken | ConvertTo-Json -Depth 10 -Compress
 Apply-Secret $namespace 'mongodb-bootstrap' @{'users.json'=$bootstrapUsers;'bootstrap.js'=[IO.File]::ReadAllBytes((Join-Path $source 'bootstrap.js'));'verify.js'=[IO.File]::ReadAllBytes((Join-Path $source 'verify.js'));'persistence.js'=[IO.File]::ReadAllBytes((Join-Path $source 'persistence.js'))}
 foreach ($account in $settings.services) {
-    $uri = 'mongodb://' + $account.user + ':' + $account.password + '@mongodb.purely-data.svc.cluster.local:27017/' + $account.database + '?authSource=' + $account.database + '&tls=true'
+    $dataDatabase = if ($account.dataDatabase) { $account.dataDatabase } else { $account.database }
+    $uri = 'mongodb://' + $account.user + ':' + $account.password + '@mongodb.purely-data.svc.cluster.local:27017/' + $dataDatabase + '?authSource=' + $account.database + '&tls=true'
     Apply-Secret $account.service 'mongodb-secret' @{uri=$uri}
     Apply-Secret $account.service 'runtime-trust' @{'truststore.p12'=[IO.File]::ReadAllBytes($trust);'ca.crt'=[IO.File]::ReadAllBytes($ca)}
 }

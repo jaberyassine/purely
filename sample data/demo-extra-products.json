@@ -1,0 +1,92 @@
+[
+  {
+    "productName": "Cork Yoga Block",
+    "price": 12.5,
+    "categoryId": "6773f28a0f5832bdbc95ebbd",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Yoga Stretch Strap",
+    "price": 8.99,
+    "categoryId": "6773f28a0f5832bdbc95ebbd",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Pilates Ring",
+    "price": 22.0,
+    "categoryId": "6773f28a0f5832bdbc95ebbd",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Adjustable Kettlebell",
+    "price": 59.99,
+    "categoryId": "6773f28a0f5832bdbc95ebc1",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Foam Roller",
+    "price": 21.5,
+    "categoryId": "6773f28a0f5832bdbc95ebc1",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Speed Jump Rope",
+    "price": 11.99,
+    "categoryId": "6773f28a0f5832bdbc95ebc1",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Stainless Steel Water Bottle",
+    "price": 19.99,
+    "categoryId": "6773f28a0f5832bdbc95ebbe",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Protein Shaker Bottle",
+    "price": 9.5,
+    "categoryId": "6773f28a0f5832bdbc95ebbe",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Cotton Gym Towel",
+    "price": 14.0,
+    "categoryId": "6773f28a0f5832bdbc95ebbf",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Travel Toiletry Bag",
+    "price": 17.99,
+    "categoryId": "6773f28a0f5832bdbc95ebbf",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Gentle Body Wash",
+    "price": 10.5,
+    "categoryId": "6773f28a0f5832bdbc95ebbf",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Everyday Hand Cream",
+    "price": 7.99,
+    "categoryId": "6773f28a0f5832bdbc95ebbf",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Soft Sleep Mask",
+    "price": 12.0,
+    "categoryId": "6773f28a0f5832bdbc95ebc0",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Vanilla Scented Candle",
+    "price": 16.5,
+    "categoryId": "6773f28a0f5832bdbc95ebc0",
+    "imageUrl": ""
+  },
+  {
+    "productName": "Massage Ball",
+    "price": 8.5,
+    "categoryId": "6773f28a0f5832bdbc95ebc0",
+    "imageUrl": ""
+  }
+]

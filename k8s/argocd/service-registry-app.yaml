@@ -12,6 +12,9 @@ spec:
     targetRevision: HEAD
     path: k8s/charts/service-registry
     helm:
+      parameters:
+        - name: service.port
+          value: "8761"
       valueFiles:
         - values.yaml
   destination:

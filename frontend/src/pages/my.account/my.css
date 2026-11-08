@@ -1,44 +1,82 @@
 .profile-card {
-    padding: 12vh 5% 20px;
+  max-width: 1184px;
+  margin: auto;
+  padding: 45px 24px 22px;
 }
-.profile-card span{
-    color: grey;
+.profile-card h3 {
+  font-family: Georgia,serif;
+  font-size: 30px;
+  color: var(--primary);
+}
+.profile-card span {
+  display: block;
+  color: var(--muted);
+  font-family: Arial,sans-serif;
+  font-size: 12px;
+  margin-top: 8px;
 }
 .orders {
-    padding: 10px 5%;
+  max-width: 1184px;
+  margin: auto;
+  padding: 15px 24px 60px;
+}
+.orders>h2 {
+  font-family: Georgia,serif;
+  font-size: 30px;
 }
 .order {
-    width: 100%;
-    background-color: rgb(231, 231, 231);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;margin: 20px 0;
-    border: 2px solid black;
+  background: #fff;
+  border: 1px solid #e0e5d7;
+  border-radius: 8px;
+  padding: 24px;
+  margin: 23px 0;
+  font-size: 12px;
+  overflow-wrap: anywhere;
 }
-.order > div {
-    background-color: white;padding: 10px;
+.order>div {
+  padding: 14px 0;
+  line-height: 1.9;
 }
-
+.order>div+div {
+  border-top: 1px solid #e0e5d7;
+}
 .order .items {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-
+  display: grid;
+  grid-template-columns: repeat(2,minmax(0,1fr));
+  gap: 20px;
 }
-
-.order .items > div {
-    display: flex;flex: 1 1 300px;
-    gap: 15px; 
-    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5);
+.order .items>div {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
-.order .items > div img {
-    height: 100px;
-    width: 100px;
+.order .items img {
+  height: 85px;
+  width: 75px;
+  object-fit: contain;
+  background: #fafaf7;
+  padding: 5px;
+  border-radius: 4px;
 }
-.order .items > div > div {
-    display: flex;
-    justify-content:center;
-    gap: 20px;
-    flex-direction: column;
+.order .items>div>div {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+@media(max-width:600px) {
+  .order .items {
+    grid-template-columns: 1fr;
+  }
+  .profile-card {
+    padding: 32px 20px 20px;
+  }
+  .profile-card h3 {
+    font-size: 26px;
+  }
+  .orders {
+    padding: 10px 20px 40px;
+  }
+  .order {
+    padding: 18px;
+  }
 }

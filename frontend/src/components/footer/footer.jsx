@@ -1,44 +1,6 @@
-import CopyRight from './copyright';
-import './footer.css'
-
-function Footer() {
-    
-
-    return (
-        <>
-            <footer>
-                <div>
-                    <h1>News letter</h1>
-                    <p>Stay tuned with us!</p>
-                    <input type='text' placeholder='Enter your email'/>
-                    <button>Submit</button>
-                </div>
-
-                <div>
-                    <h1>Your Journey To Wellness</h1>
-                    <p>We aim to partner with our customers on each of their unique wellness journeys, which is why the team at Wellness Warehouse works tirelessly to keep you living life well.</p>
-                    <button>Learn more</button>
-                </div>
-
-
-                <div>
-                    <h1>Contact Us</h1>
-                    <div>
-                        <p><span><i className="fa fa-map-marker"></i></span>No 123, Lotus strret, Colombo</p>
-                        <p><span><i className="fa fa-phone"></i></span>+94 741258963, 9632587412</p>
-                        <p><span><i className="fa fa-envelope"></i></span>bitebliss@abc.com</p>
-                    </div>
-                    <p>
-                        <span><i className="fa fa-facebook"></i></span>
-                        <span><i className="fa fa-twitter"></i></span>
-                        <span><i className="fa fa-instagram"></i></span>
-                        <span><i className="fa fa-youtube"></i></span>
-                    </p>
-                </div>
-            </footer>
-            <CopyRight />
-        </>
-    )
+import { Link } from 'react-router-dom';
+import { FiArrowUpRight } from 'react-icons/fi';
+import Logo from '../logo/logo';
+export default function Footer() {
+  return <footer className="site-footer"><div className="footer-main"><div className="footer-brand"><Logo /><p>A little more balance.<br />A little more everyday joy.</p></div><div><h3>Take a look around</h3><Link to="/products/All">Shop all essentials <FiArrowUpRight /></Link><Link to="/#our-story">Our approach</Link></div><div><h3>Your space</h3><Link to="/auth/login">Sign in</Link><Link to="/auth/register">Create an account</Link><Link to="/my/account">My orders</Link></div><div className="footer-note"><span className="eyebrow">GOOD TO KNOW</span><p>This is a demonstration store. Products and prices are illustrative. No payments are collected.</p></div></div><div className="footer-bottom"><span>© {new Date().getFullYear()} Purely. Made for the everyday.</span><span>Move. Nourish. Unwind.</span></div></footer>;
 }
-
-export default Footer;

@@ -12,7 +12,6 @@ export const useAuth = () => {
 
     useEffect(() => {
         toggleUser()
-        console.log("toggling user")
     }, [])
 
     return {user, toggleUser}

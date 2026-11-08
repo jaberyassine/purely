@@ -11,14 +11,13 @@ function OrderService() {
   const navigate = useNavigate();
 
   const authHeader = () => {
-    return { Authorization: `${user?.type}${user?.token}` };
+    return { Authorization: `Bearer ${user?.token}` };
   };
 
   const placeOrder = async (
     { fname, lname, address1, address2, city, phone },
     cart
   ) => {
-    console.log(fname, lname, address1, address2, city, phone, cart);
     setLoading(true);
     await axios
       .post(
@@ -35,13 +34,13 @@ function OrderService() {
         { headers: authHeader() }
       )
       .then((response) => {
+        if (!response.data.success) throw new Error('Order was not accepted');
         setError(null);
-        console.log(response);
         // Removed redirect after order placement
       })
       .catch((error) => {
-        console.log(error);
-        setError(error.response.data.message);
+        setError('Your order could not be placed. Your bag has been kept; please try again.');
+        throw new Error('Order was not placed');
       });
 
     setLoading(false);
@@ -58,7 +57,6 @@ function OrderService() {
         setUserOrders(response.data.response);
       })
       .catch((error) => {
-        console.log(error);
         setUserOrders([]);
       });
     setLoading(false);
