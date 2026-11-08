@@ -56,6 +56,8 @@ jobs:
         with:
           terraform_version: '1.9.8'
       - run: node scripts/check-config.cjs
+      - name: Test collection-scoped identity reader migration
+        run: node scripts/tests/test-user-directory.cjs
       - name: Test Sonar authentication preflight without credentials or network
         run: python3 -m unittest discover -s scripts/tests -p test_sonar_access.py
       - name: Test Prometheus service discovery
