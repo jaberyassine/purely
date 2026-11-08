@@ -9,7 +9,7 @@ export function categoryImage(image) {
 }
 export default function Categories() {
   const { getAllCategories, categories, isLoading, error } = ProductService();
-  useEffect(() => { getAllCategories(); }, []);
+  useEffect(() => { void getAllCategories(); }, []);
   const collections = categories.filter(item => !item.categoryName.startsWith('Demo Wellness'));
   return <section className="store-section collections-section" aria-labelledby="collections-title">
     <div className="section-heading"><div><span className="eyebrow">A PLACE TO START</span><h2 id="collections-title">Your kind of wellness.</h2></div><Link className="inline-link" to="/products/All">Explore everything <FiArrowUpRight /></Link></div>

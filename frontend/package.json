@@ -1,13 +1,24 @@
 {
+  "name": "purely-frontend",
+  "private": true,
   "devDependencies": {
+    "@testing-library/react": "16.3.0",
+    "@testing-library/user-event": "14.6.1",
+    "@vitest/coverage-v8": "4.1.12",
+    "jsdom": "26.1.0",
+    "vitest": "4.1.12",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
     "@vitejs/plugin-react": "^4.7.0",
     "typescript": "^5.9.2",
-    "vite": "^7.0.6"
+    "vite": "7.0.6"
+  },
+  "overrides": {
+    "vite": "$vite"
   },
   "scripts": {
     "test": "node --test tests/*.test.mjs",
+    "test:coverage": "npm test && vitest run --coverage",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
