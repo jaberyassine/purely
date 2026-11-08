@@ -21,3 +21,10 @@ This is a one-time certificate bootstrap for the temporary demo. It does not
 claim automatic renewal. The final runbook must record certificate expiry;
 the demo must end before expiry or have a separate verified renewal procedure.
 The public frontend certificate is separate from the internal MongoDB/SMTP CA.
+
+The initial Trivy scan found five HIGH findings in pip's bundled msgpack 1.1.2,
+urllib3 2.7.0 and pkg_resources/setuptools 70.3.0. The normal runtime copies of
+urllib3 and setuptools were already patched. The image removes the unneeded
+pip installer and all its vendored code. Build checks require pip to be absent
+and Certbot/plugin discovery to work as the non-root runtime user. No SBOMs,
+scanner rules or vulnerability exceptions are edited.
