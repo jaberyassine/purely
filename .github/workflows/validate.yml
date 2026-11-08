@@ -64,6 +64,13 @@ jobs:
             helm lint "$chart" --strict
             helm template verify "$chart" >/dev/null
           done
+      - name: Validate private runtime charts with placeholder digests
+        run: |
+          for component in mongodb mailpit; do
+            image="purelyys71154f86.azurecr.io/${component}-demo@sha256:0000000000000000000000000000000000000000000000000000000000000000"
+            helm lint "k8s/data/$component" --strict --set-string "image=$image"
+            helm template verify "k8s/data/$component" --namespace purely-data --set-string "image=$image" >/dev/null
+          done
       - run: terraform -chdir=infra fmt -check -recursive
       - run: terraform -chdir=infra init -backend=false -input=false
       - run: terraform -chdir=infra validate

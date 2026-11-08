@@ -61,7 +61,14 @@ spec:
           resources:
             {{- toYaml .Values.resources | nindent 12 }}
           volumeMounts:
+            {{- if .Values.runtimeTrust.enabled }}
+            - { name: runtime-trust, mountPath: /etc/purely/trust, readOnly: true }
+            {{- end }}
             - { name: tmp, mountPath: /tmp }
       volumes:
+        {{- if .Values.runtimeTrust.enabled }}
+        - name: runtime-trust
+          secret: { secretName: {{ .Values.runtimeTrust.secretName }}, defaultMode: 0440 }
+        {{- end }}
         - name: tmp
           emptyDir: { sizeLimit: 128Mi }
