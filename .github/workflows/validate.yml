@@ -24,11 +24,16 @@ jobs:
       - name: Test and package
         working-directory: microservice-backend/${{ matrix.service }}
         run: mvn -B verify -Dspring.profiles.active=test
+      - name: Require JaCoCo XML coverage report
+        working-directory: microservice-backend/${{ matrix.service }}
+        run: test -s target/site/jacoco/jacoco.xml
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: tests-${{ matrix.service }}
-          path: microservice-backend/${{ matrix.service }}/target/surefire-reports/
+          path: |
+            microservice-backend/${{ matrix.service }}/target/surefire-reports/
+            microservice-backend/${{ matrix.service }}/target/site/jacoco/
   frontend:
     runs-on: ubuntu-latest
     steps:
