@@ -4,7 +4,7 @@ import { FiPlus, FiCheck, FiImage, FiArrowRight } from 'react-icons/fi';
 import CartContext from '../../contexts/cart.contect';
 import { AuthContext } from '../../contexts/auth.context';
 
-export function ProductCard({ product }) {
+export function ProductCard({ product, detail = false }) {
   const { addItemToCart } = useContext(CartContext);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
@@ -20,12 +20,15 @@ export function ProductCard({ product }) {
     } catch { setMessage('Could not add item. Please try again.'); }
     finally { setBusy(false); }
   };
-  return <article className="product-card">
-    <div className="product-photo">{broken || !product.imageUrl ? <span className="photo-unavailable"><FiImage />Photo unavailable</span> : <img src={product.imageUrl} alt={product.productName} loading="lazy" onError={() => setBroken(true)} />}
+  const productPath = '/product/' + encodeURIComponent(product.id);
+  const photo = <div className="product-photo">{broken || !product.imageUrl ? <span className="photo-unavailable"><FiImage />Photo unavailable</span> : <img src={product.imageUrl} alt={product.productName} loading="lazy" onError={() => setBroken(true)} />}
       <span className="product-category">{product.categoryName}</span>
-    </div>
-    <div className="product-details"><h3>{product.productName}</h3><div className="product-bottom"><span className="product-amount"><small>Rs.</small> {Number(product.price).toFixed(2)}</span>
-      <button className="add-to-bag" disabled={busy} onClick={add} aria-label={(busy ? 'Adding ' : 'Add to bag: ') + product.productName}>{busy ? 'Adding…' : message === 'Added to your bag' ? <><FiCheck /> Added</> : <><FiPlus /> Add to bag</>}</button>
+    </div>;
+  return <article className="product-card">
+    {detail ? photo : <Link to={productPath} aria-label={'View product: ' + product.productName}>{photo}</Link>}
+    <div className="product-details">
+      {detail ? <><h1>{product.productName}</h1><p>{product.description}</p></> : <h3><Link to={productPath}>{product.productName}</Link></h3>}<div className="product-bottom"><span className="product-amount"><small>Rs.</small> {Number(product.price).toFixed(2)}</span>
+      <button className="add-to-bag" disabled={busy} onClick={add} aria-label={(busy ? 'Adding ' : 'Add to bag: ') + product.productName}>{busy ? 'Adding…' : message === 'Added to your bag' ? <><FiCheck /> Added</> : <><FiPlus /> {user?.token ? 'Add to bag' : 'Sign in to add'}</>}</button>
     </div><span className="product-feedback" role="status">{message}</span></div>
   </article>;
 }
