@@ -1,7 +1,7 @@
 replicaCount: 2
 image:
   repository: purelyys71154f86.azurecr.io/api-gateway
-  tag: 9e7d2885126d3cfa2aa47f46b3145f38b4ac742f
+  tag: faba2c50d7f65be483c0087aafcba68ffade5430
 service:
   type: ClusterIP
   port: 80
