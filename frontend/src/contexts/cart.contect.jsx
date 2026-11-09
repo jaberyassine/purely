@@ -27,15 +27,15 @@ export const CartProvider = ({ children }) => {
         { productId, quantity },
         { headers: authHeader() }
       )
-      .then(() => {
-        setError(false);
-        success = true;
+      .then(({ data }) => {
+        success = data?.success === true;
+        setError(!success);
       })
       .catch(() => {
         setError(true);
       });
     setProcessing(false);
-    await getCartInformation();
+    if (success) await getCartInformation();
     return success;
   };
 

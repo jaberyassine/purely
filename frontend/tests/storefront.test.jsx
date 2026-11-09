@@ -119,6 +119,18 @@ describe('catalog requests', () => {
 });
 
 describe('product cards', () => {
+  it('opens product details from the catalog through the real route', async () => {
+    window.history.replaceState({}, '', '/products/All');
+    vi.spyOn(window, 'scrollTo').mockImplementation(() => {});
+    axios.get.mockImplementation((url, options) => url.endsWith('/get/byId')
+      ? Promise.resolve({ data: { success: true, response: products.find(product => product.id === options.params.id) } })
+      : catalogResponse(url));
+    render(<App />);
+    await userEvent.click(await screen.findByRole('link', { name: 'View product: Yoga Mat' }));
+    expect(await screen.findByRole('heading', { name: 'Yoga Mat', level: 1 })).toBeTruthy();
+    expect(screen.getByText('Movement', { exact: true })).toBeTruthy();
+    expect(window.location.pathname).toBe('/product/mat');
+  });
   it('shows the actual photo, name and two-decimal price', () => {
     mount(<ProductCard product={products[0]} />);
     expect(screen.getByRole('img', { name: 'Yoga Mat' }).getAttribute('src')).toBe(products[0].imageUrl);

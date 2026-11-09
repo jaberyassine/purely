@@ -1400,3 +1400,12 @@ input,textarea,select {
     transition: none!important;
   }
 }
+
+.product-detail-view {
+  max-width: 32rem;
+  margin-block: 1.5rem 3rem;
+}
+
+.product-detail-view h1 {
+  margin: 0;
+}

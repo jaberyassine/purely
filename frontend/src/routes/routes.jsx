@@ -2,6 +2,7 @@ import { Suspense, lazy, useContext } from 'react';
 import { Routes, Route, Navigate, Outlet } from "react-router-dom";
 import Loading from "../components/loading/loading";
 import Products from '../pages/products/products.jsx';
+import ProductDetails from '../pages/products/product-details.jsx';
 import CheckoutForm from '../pages/checkout/checkout.jsx';
 import Search from '../pages/search/search.jsx';
 import OrderSuccess from '../pages/checkout/order.success.jsx';
@@ -34,6 +35,7 @@ function AppRoutes() {
             <Routes>
                 <Route path="/" element={<Home />} />
                 <Route path="/products/:category" element={<Products />} />
+                <Route path="/product/:id" element={<ProductDetails />} />
                 <Route path="/search/:search" element={<Search />} />
                 <Route path="*" element={<NotFound />} />
                 <Route path="/unauthorized" element={<Unauthorized />} />
