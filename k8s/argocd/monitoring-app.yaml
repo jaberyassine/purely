@@ -25,6 +25,28 @@ spec:
           enabled: false
         kubeProxy:
           enabled: false
+        alertmanager:
+          config:
+            route:
+              routes:
+                - receiver: 'null'
+                  matchers:
+                    - 'alertname = Watchdog'
+                - receiver: purely-slack
+                  matchers:
+                    - 'alertname =~ "PurelyTargetDown|PurelyProductMetricsMissing|PurelyDeploymentUnavailable"'
+                    - 'severity =~ "warning|critical"'
+                  group_by: [alertname, namespace]
+            receivers:
+              - name: 'null'
+              - name: purely-slack
+                slack_configs:
+                  - channel: '#all-purely-alerts'
+                    api_url_file: /etc/alertmanager/secrets/purely-slack-webhook/url
+                    send_resolved: true
+          alertmanagerSpec:
+            secrets:
+              - purely-slack-webhook
         grafana:
           additionalDataSources:
             - name: Purely Prometheus
